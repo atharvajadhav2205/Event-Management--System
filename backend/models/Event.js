@@ -54,6 +54,10 @@ const eventSchema = new mongoose.Schema({
       ref: 'User',
     },
   ],
+  certificateTemplate: {
+    type: String,
+    default: '',
+  },
   posterUrl: {
     type: String,
     default: '',

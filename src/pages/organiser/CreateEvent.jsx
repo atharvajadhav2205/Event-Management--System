@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import API from '../../api/axios';
-import { PlusCircle, CalendarDays, Clock, MapPin, Users, AlignLeft, Tag, Image, Trophy, AlertCircle } from 'lucide-react';
+import { PlusCircle, CalendarDays, Clock, MapPin, Users, AlignLeft, Tag, Image, Trophy, AlertCircle, FileUp } from 'lucide-react';
 
 export default function CreateEvent() {
   const [form, setForm] = useState({
@@ -16,6 +16,7 @@ export default function CreateEvent() {
     prizePool: '',
     deadlines: '',
   });
+  const [templateFile, setTemplateFile] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -24,19 +25,48 @@ export default function CreateEvent() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setTemplateFile(file);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
 
     try {
-      await API.post('/events/create', {
-        ...form,
-        capacity: Number(form.capacity),
+      // Use FormData to send both text fields and the file
+      const formData = new FormData();
+      formData.append('title', form.title);
+      formData.append('description', form.description);
+      formData.append('date', form.date);
+      formData.append('time', form.time);
+      formData.append('location', form.location);
+      formData.append('collegeName', form.collegeName);
+      formData.append('capacity', Number(form.capacity));
+      formData.append('category', form.category);
+      formData.append('posterUrl', form.posterUrl);
+      formData.append('prizePool', form.prizePool);
+      formData.append('deadlines', form.deadlines);
+
+      if (templateFile) {
+        formData.append('certificateTemplate', templateFile);
+      }
+
+      await API.post('/events/create', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
+
       setSubmitted(true);
       setTimeout(() => setSubmitted(false), 3000);
       setForm({ title: '', date: '', time: '', location: '', description: '', capacity: null, category: 'Technology', collegeName: '', posterUrl: '', prizePool: '', deadlines: '' });
+      setTemplateFile(null);
+      // Reset file input
+      const fileInput = document.getElementById('certificateTemplate');
+      if (fileInput) fileInput.value = '';
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to create event');
     } finally {
@@ -132,6 +162,39 @@ export default function CreateEvent() {
                   placeholder="Describe the event..."
                   className="w-full pl-11 pr-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all text-sm resize-none"
                 />
+              </div>
+            </div>
+
+            {/* Certificate Template Upload */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                Certificate Template (Optional)
+              </label>
+              <p className="text-xs text-gray-400 mb-2">
+                Upload a certificate background image (PNG/JPG, max 5MB). Student names will be overlaid on this template.
+              </p>
+              <div className="relative">
+                <div className="flex items-center gap-3">
+                  <label
+                    htmlFor="certificateTemplate"
+                    className="flex items-center gap-2 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-600 cursor-pointer hover:bg-gray-100 transition-colors"
+                  >
+                    <FileUp className="w-4 h-4" />
+                    {templateFile ? 'Change File' : 'Choose File'}
+                  </label>
+                  <input
+                    id="certificateTemplate"
+                    type="file"
+                    accept="image/png,image/jpeg,image/jpg"
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+                  {templateFile && (
+                    <span className="text-sm text-gray-500 truncate max-w-[200px]">
+                      {templateFile.name}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
 

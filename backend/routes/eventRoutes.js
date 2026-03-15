@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { protect, authorize } = require('../middleware/auth');
+const upload = require('../middleware/upload');
 const {
   createEvent,
   getApprovedEvents,
@@ -20,7 +21,7 @@ router.post('/apply/:id', protect, authorize('student'), applyToEvent);
 router.get('/applied', protect, authorize('student'), getAppliedEvents);
 
 // --- Organiser ---
-router.post('/create', protect, authorize('organiser'), createEvent);
+router.post('/create', protect, authorize('organiser'), upload.single('certificateTemplate'), createEvent);
 router.get('/my-events', protect, authorize('organiser'), getMyEvents);
 
 // --- Admin ---

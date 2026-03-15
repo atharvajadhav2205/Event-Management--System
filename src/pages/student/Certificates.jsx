@@ -5,6 +5,7 @@ import { Award, Download, CalendarDays, Loader2 } from 'lucide-react';
 export default function Certificates() {
   const [certificates, setCertificates] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [downloading, setDownloading] = useState({});
 
   useEffect(() => {
     const fetchCertificates = async () => {
@@ -20,6 +21,30 @@ export default function Certificates() {
     fetchCertificates();
   }, []);
 
+  const handleDownload = async (certId, eventTitle) => {
+    setDownloading((prev) => ({ ...prev, [certId]: true }));
+    try {
+      const response = await API.get(`/certificates/download/${certId}`, {
+        responseType: 'blob',
+      });
+
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Certificate_${eventTitle?.replace(/\s+/g, '_') || 'Event'}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Error downloading certificate:', err);
+      alert('Failed to download certificate. Please try again.');
+    } finally {
+      setDownloading((prev) => ({ ...prev, [certId]: false }));
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -32,7 +57,7 @@ export default function Certificates() {
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-800">My Certificates</h1>
-        <p className="text-gray-500 text-sm mt-1">View and download your earned certificates</p>
+        <p className="text-gray-500 text-sm mt-1">Download your earned certificates for each event</p>
       </div>
 
       {certificates.length === 0 ? (
@@ -41,35 +66,63 @@ export default function Certificates() {
           <p className="text-sm mt-1">Attend events to earn certificates</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-          {certificates.map((cert) => (
-            <div
-              key={cert._id}
-              className="bg-white rounded-2xl border border-gray-100 shadow-card hover:shadow-lg transition-all duration-300 p-6 group"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center shadow-sm">
-                  <Award className="w-6 h-6 text-white" />
-                </div>
-                <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-700">
-                  Certificate
-                </span>
-              </div>
-
-              <h3 className="font-bold text-gray-800 text-lg mb-1">
-                {cert.eventId?.title || 'Event'}
-              </h3>
-              <div className="flex items-center gap-1.5 text-sm text-gray-500 mb-4">
-                <CalendarDays className="w-4 h-4" />
-                Issued: {new Date(cert.issuedAt).toLocaleDateString()}
-              </div>
-
-              <button className="w-full flex items-center justify-center gap-2 py-2.5 border-2 border-primary-100 text-primary-600 rounded-xl text-sm font-semibold hover:bg-primary-50 active:scale-[0.98] transition-all duration-150">
-                <Download className="w-4 h-4" />
-                Download Certificate
-              </button>
-            </div>
-          ))}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-card overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-gray-50 text-gray-500 text-left">
+                  <th className="px-6 py-4 font-semibold">#</th>
+                  <th className="px-6 py-4 font-semibold">Event Name</th>
+                  <th className="px-6 py-4 font-semibold">Category</th>
+                  <th className="px-6 py-4 font-semibold">Issued On</th>
+                  <th className="px-6 py-4 font-semibold text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {certificates.map((cert, idx) => (
+                  <tr key={cert._id} className="hover:bg-gray-50/60 transition-colors">
+                    <td className="px-6 py-4 text-gray-400 font-medium">{idx + 1}</td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg flex items-center justify-center shadow-sm flex-shrink-0">
+                          <Award className="w-4 h-4 text-white" />
+                        </div>
+                        <span className="font-semibold text-gray-800">
+                          {cert.eventId?.title || 'Event'}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-gray-500">
+                      {cert.eventId?.category || '—'}
+                    </td>
+                    <td className="px-6 py-4 text-gray-500">
+                      <div className="flex items-center gap-1.5">
+                        <CalendarDays className="w-3.5 h-3.5" />
+                        {new Date(cert.issuedAt).toLocaleDateString()}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <button
+                        onClick={() => handleDownload(cert._id, cert.eventId?.title)}
+                        disabled={downloading[cert._id]}
+                        className="inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-lg text-xs font-semibold hover:from-primary-600 hover:to-primary-700 active:scale-[0.97] transition-all shadow-sm disabled:opacity-60"
+                      >
+                        {downloading[cert._id] ? (
+                          <>
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" /> Downloading...
+                          </>
+                        ) : (
+                          <>
+                            <Download className="w-3.5 h-3.5" /> Download
+                          </>
+                        )}
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>

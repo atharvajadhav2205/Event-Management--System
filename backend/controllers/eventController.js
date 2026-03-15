@@ -12,7 +12,7 @@ const createEvent = async (req, res) => {
   try {
     const { title, description, date, time, location, collegeName, capacity, category } = req.body;
 
-    const event = await Event.create({
+    const eventData = {
       title,
       description,
       date,
@@ -23,7 +23,14 @@ const createEvent = async (req, res) => {
       category,
       organiserId: req.user._id,
       organiserName: req.user.name,
-    });
+    };
+
+    // If a certificate template image was uploaded via multer
+    if (req.file) {
+      eventData.certificateTemplate = req.file.path;
+    }
+
+    const event = await Event.create(eventData);
 
     res.status(201).json(event);
   } catch (error) {
