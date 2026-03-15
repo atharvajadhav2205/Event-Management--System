@@ -1,0 +1,92 @@
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useAuth } from './context/AuthContext';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+import DashboardLayout from './components/DashboardLayout';
+
+// Student
+import ViewEvents from './pages/student/ViewEvents';
+import AppliedEvents from './pages/student/AppliedEvents';
+import Certificates from './pages/student/Certificates';
+
+// Admin
+import ApproveEvents from './pages/admin/ApproveEvents';
+import EventAnalytics from './pages/admin/EventAnalytics';
+
+// Organiser
+import CreateEvent from './pages/organiser/CreateEvent';
+import MarkAttendance from './pages/organiser/MarkAttendance';
+import GenerateCertificates from './pages/organiser/GenerateCertificates';
+
+/**
+ * ProtectedRoute — redirects to /login if not authenticated.
+ * Optionally checks if user has the required role.
+ */
+function ProtectedRoute({ children, allowedRoles }) {
+  const { user, loading } = useAuth();
+
+  if (loading) return null; // Or a loading spinner
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    return <Navigate to={`/${user.role}`} replace />;
+  }
+
+  return children;
+}
+
+export default function App() {
+  const { user, loading } = useAuth();
+
+  if (loading) return null;
+
+  return (
+    <Routes>
+      {/* Public */}
+      <Route path="/login" element={user ? <Navigate to={`/${user.role}`} replace /> : <Login />} />
+      <Route path="/signup" element={user ? <Navigate to={`/${user.role}`} replace /> : <Signup />} />
+
+      {/* Dashboard shell — :role = student | organiser | admin */}
+      <Route
+        path="/:role"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout />
+          </ProtectedRoute>
+        }
+      >
+        {/* Student */}
+        <Route path="events" element={<ViewEvents />} />
+        <Route path="applied" element={<AppliedEvents />} />
+        <Route path="certificates" element={<Certificates />} />
+
+        {/* Admin */}
+        <Route path="approve-events" element={<ApproveEvents />} />
+        <Route path="analytics" element={<EventAnalytics />} />
+
+        {/* Organiser */}
+        <Route path="create-event" element={<CreateEvent />} />
+        <Route path="attendance" element={<MarkAttendance />} />
+        <Route path="generate-certificates" element={<GenerateCertificates />} />
+
+        {/* Default redirect for each role */}
+        <Route index element={<RoleIndex />} />
+      </Route>
+
+      {/* Catch-all */}
+      <Route path="*" element={<Navigate to="/login" replace />} />
+    </Routes>
+  );
+}
+
+function RoleIndex() {
+  const { user } = useAuth();
+  const role = user?.role;
+  if (role === 'student') return <Navigate to="events" replace />;
+  if (role === 'admin') return <Navigate to="approve-events" replace />;
+  if (role === 'organiser') return <Navigate to="create-event" replace />;
+  return <Navigate to="events" replace />;
+}
