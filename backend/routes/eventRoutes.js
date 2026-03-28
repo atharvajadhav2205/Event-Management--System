@@ -23,7 +23,11 @@ router.post('/apply/:id', protect, authorize('student'), applyToEvent);
 router.get('/applied', protect, authorize('student'), getAppliedEvents);
 
 // --- Organiser ---
+<<<<<<< HEAD
 router.post('/create', protect, authorize('organiser'), upload.array('attachments', 10), createEvent);
+=======
+router.post('/create', protect, authorize('organiser'), upload.single('certificateTemplate'), createEvent);
+>>>>>>> 89d7a5cd3a06aaa2d82a142694d0465b728c050b
 router.get('/my-events', protect, authorize('organiser'), getMyEvents);
 
 // --- Admin ---

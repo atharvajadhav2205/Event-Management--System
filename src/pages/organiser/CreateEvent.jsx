@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import API from '../../api/axios';
+<<<<<<< HEAD
 import { PlusCircle, CalendarDays, Clock, MapPin, Users, AlignLeft, Tag, Image, Trophy, AlertCircle, UsersRound, Bold, Italic, Underline, List, UploadCloud, X, FileText } from 'lucide-react';
 import { useRef } from 'react';
+=======
+import { PlusCircle, CalendarDays, Clock, MapPin, Users, AlignLeft, Tag, Image, Trophy, AlertCircle, FileUp } from 'lucide-react';
+>>>>>>> 89d7a5cd3a06aaa2d82a142694d0465b728c050b
 
 import RichTextEditor from '../../components/RichTextEditor';
 
@@ -31,7 +35,11 @@ export default function CreateEvent() {
     // Attachments
     attachments: [],
   });
+<<<<<<< HEAD
 
+=======
+  const [templateFile, setTemplateFile] = useState(null);
+>>>>>>> 89d7a5cd3a06aaa2d82a142694d0465b728c050b
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -70,6 +78,13 @@ export default function CreateEvent() {
     }));
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setTemplateFile(file);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -91,6 +106,7 @@ export default function CreateEvent() {
     setIsLoading(true);
 
     try {
+<<<<<<< HEAD
       const uploadData = new FormData();
       
       // Append standard fields
@@ -127,6 +143,37 @@ export default function CreateEvent() {
         isTeamEvent: false, minTeamSize: 2, maxTeamSize: 4,
         attachments: [],
       });
+=======
+      // Use FormData to send both text fields and the file
+      const formData = new FormData();
+      formData.append('title', form.title);
+      formData.append('description', form.description);
+      formData.append('date', form.date);
+      formData.append('time', form.time);
+      formData.append('location', form.location);
+      formData.append('collegeName', form.collegeName);
+      formData.append('capacity', Number(form.capacity));
+      formData.append('category', form.category);
+      formData.append('posterUrl', form.posterUrl);
+      formData.append('prizePool', form.prizePool);
+      formData.append('deadlines', form.deadlines);
+
+      if (templateFile) {
+        formData.append('certificateTemplate', templateFile);
+      }
+
+      await API.post('/events/create', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      setSubmitted(true);
+      setTimeout(() => setSubmitted(false), 3000);
+      setForm({ title: '', date: '', time: '', location: '', description: '', capacity: null, category: 'Technology', collegeName: '', posterUrl: '', prizePool: '', deadlines: '' });
+      setTemplateFile(null);
+      // Reset file input
+      const fileInput = document.getElementById('certificateTemplate');
+      if (fileInput) fileInput.value = '';
+>>>>>>> 89d7a5cd3a06aaa2d82a142694d0465b728c050b
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to create event');
     } finally {
@@ -224,6 +271,7 @@ export default function CreateEvent() {
               />
             </div>
 
+<<<<<<< HEAD
             {/* ── Attachments Upload Section ──────────────── */}
             <div className="p-5 bg-gray-50 border border-gray-200 rounded-xl space-y-4">
               <div>
@@ -357,6 +405,41 @@ export default function CreateEvent() {
             </div>
 
             {/* ── Submit button ────────────────────────────── */}
+=======
+            {/* Certificate Template Upload */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                Certificate Template (Optional)
+              </label>
+              <p className="text-xs text-gray-400 mb-2">
+                Upload a certificate background image (PNG/JPG, max 5MB). Student names will be overlaid on this template.
+              </p>
+              <div className="relative">
+                <div className="flex items-center gap-3">
+                  <label
+                    htmlFor="certificateTemplate"
+                    className="flex items-center gap-2 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-600 cursor-pointer hover:bg-gray-100 transition-colors"
+                  >
+                    <FileUp className="w-4 h-4" />
+                    {templateFile ? 'Change File' : 'Choose File'}
+                  </label>
+                  <input
+                    id="certificateTemplate"
+                    type="file"
+                    accept="image/png,image/jpeg,image/jpg"
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+                  {templateFile && (
+                    <span className="text-sm text-gray-500 truncate max-w-[200px]">
+                      {templateFile.name}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+>>>>>>> 89d7a5cd3a06aaa2d82a142694d0465b728c050b
             <button
               type="submit"
               disabled={isLoading}

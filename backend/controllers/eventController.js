@@ -31,7 +31,7 @@ const createEvent = async (req, res) => {
       }
     }
 
-    const event = await Event.create({
+    const eventData = {
       title,
       description,
       date,
@@ -49,7 +49,14 @@ const createEvent = async (req, res) => {
       attachments: parsedAttachments,
       organiserId: req.user._id,
       organiserName: req.user.name,
-    });
+    };
+
+    // If a certificate template image was uploaded via multer
+    if (req.file) {
+      eventData.certificateTemplate = req.file.path;
+    }
+
+    const event = await Event.create(eventData);
 
     res.status(201).json(event);
   } catch (error) {

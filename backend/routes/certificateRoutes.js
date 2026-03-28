@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { protect, authorize } = require('../middleware/auth');
+<<<<<<< HEAD
 const upload = require('../middleware/upload');
 const {
   uploadTemplate,
@@ -13,6 +14,9 @@ const {
   downloadCertificate,
   getAllCertificates,
 } = require('../controllers/certificateController');
+=======
+const { generateCertificate, getMyCertificates, downloadCertificate } = require('../controllers/certificateController');
+>>>>>>> 89d7a5cd3a06aaa2d82a142694d0465b728c050b
 
 // GET /api/certificates/admin/all - Get all certificates for admin
 router.get('/admin/all', protect, authorize('admin'), getAllCertificates);
@@ -44,7 +48,12 @@ router.get('/event/:eventId', protect, authorize('organiser'), getEventCertifica
 // GET /api/certificates/my — Get student's certificates
 router.get('/my', protect, authorize('student'), getMyCertificates);
 
+<<<<<<< HEAD
 // GET /api/certificates/download/:certificateId — Download certificate (proxy)
 router.get('/download/:certificateId', protect, downloadCertificate);
+=======
+// GET /api/certificates/download/:certificateId — Download certificate PDF
+router.get('/download/:certificateId', protect, authorize('student'), downloadCertificate);
+>>>>>>> 89d7a5cd3a06aaa2d82a142694d0465b728c050b
 
 module.exports = router;

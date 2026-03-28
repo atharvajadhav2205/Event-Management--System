@@ -12,14 +12,18 @@
     "cloudinary": "^2.9.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
-    "express": "^4.21.2",
+    "express": "^4.22.1",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.5",
     "multer": "^2.1.1",
+<<<<<<< HEAD
     "nodemailer": "^8.0.2",
     "pdf-lib": "^1.17.1",
     "pdfkit": "^0.18.0",
     "sharp": "^0.34.5"
+=======
+    "pdfkit": "^0.18.0"
+>>>>>>> 89d7a5cd3a06aaa2d82a142694d0465b728c050b
   },
   "devDependencies": {
     "nodemon": "^3.1.9"

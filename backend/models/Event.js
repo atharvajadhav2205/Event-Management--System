@@ -54,6 +54,7 @@ const eventSchema = new mongoose.Schema({
       ref: 'User',
     },
   ],
+<<<<<<< HEAD
   registeredStudents: [
     {
       userId: {
@@ -100,6 +101,12 @@ const eventSchema = new mongoose.Schema({
       type: { type: String },
     }
   ],
+=======
+  certificateTemplate: {
+    type: String,
+    default: '',
+  },
+>>>>>>> 89d7a5cd3a06aaa2d82a142694d0465b728c050b
   posterUrl: {
     type: String,
     default: '',
