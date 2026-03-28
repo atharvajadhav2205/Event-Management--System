@@ -54,6 +54,52 @@ const eventSchema = new mongoose.Schema({
       ref: 'User',
     },
   ],
+  registeredStudents: [
+    {
+      userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+      participantName: {
+        type: String,
+        default: '',
+      },
+      teamName: {
+        type: String,
+        default: '',
+      },
+      teamMembers: [
+        {
+          name: String,
+          email: String,
+          phone: String,
+          college: String,
+          yearDept: String,
+        }
+      ],
+      registeredAt: {
+        type: Date,
+        default: Date.now,
+      }
+    }
+  ],
+  isTeamEvent: {
+    type: Boolean,
+    default: false,
+  },
+  minTeamSize: {
+    type: Number,
+  },
+  maxTeamSize: {
+    type: Number,
+  },
+  attachments: [
+    {
+      name: String,
+      url: String,
+      type: { type: String },
+    }
+  ],
   posterUrl: {
     type: String,
     default: '',

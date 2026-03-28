@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
-
+const path = require('path');
 
 // Load environment variables
 dotenv.config();
@@ -15,6 +15,9 @@ const app = express();
 // --- Middleware ---
 app.use(cors());
 app.use(express.json());
+
+// Serve static uploads folder
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // --- API Routes ---
 app.use('/api/auth', require('./routes/authRoutes'));

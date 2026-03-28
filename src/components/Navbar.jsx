@@ -24,30 +24,25 @@ export default function Navbar({ role, onMenuToggle }) {
           <Menu className="w-5 h-5 text-gray-600" />
         </button>
 
-        {/* Search bar (desktop) */}
-        <div className="hidden md:flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-2 w-64">
-          <Search className="w-4 h-4 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search events..."
-            className="bg-transparent outline-none text-sm text-gray-600 w-full placeholder:text-gray-400"
-          />
-        </div>
+
       </div>
 
       {/* Right */}
-      <div className="flex items-center gap-3">
-        <button className="relative p-2 rounded-xl hover:bg-gray-100 transition-colors">
-          <Bell className="w-5 h-5 text-gray-600" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full" />
-        </button>
+      <div className="flex items-center gap-3 sm:gap-4">
 
-        <div className={`px-3 py-1 rounded-lg text-xs font-semibold ${badgeColor}`}>
-          {displayRole}
-        </div>
 
-        <div className="w-9 h-9 bg-gradient-to-br from-primary-400 to-primary-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-          {userInitial}
+        <div className="flex items-center gap-3 sm:border-l sm:border-gray-200 sm:pl-4">
+          <div className="hidden sm:flex flex-col items-end">
+            <span className="text-sm font-bold text-gray-800 leading-tight">
+              {user?.name || 'Loading...'}
+            </span>
+            <span className={`text-[10px] font-bold uppercase tracking-wide mt-0.5 px-2 py-0.5 rounded-md ${badgeColor}`}>
+              {displayRole}
+            </span>
+          </div>
+          <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 shadow-md shadow-primary-500/20 rounded-xl flex items-center justify-center text-white font-bold text-sm">
+            {userInitial}
+          </div>
         </div>
       </div>
     </header>

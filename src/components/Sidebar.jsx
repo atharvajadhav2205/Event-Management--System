@@ -22,6 +22,7 @@ const menuMap = {
   ],
   organiser: [
     { label: 'Create Event', path: 'create-event', icon: PlusCircle },
+    { label: 'My Events', path: 'my-events', icon: CalendarDays },
     { label: 'Mark Attendance', path: 'attendance', icon: UserCheck },
     { label: 'Generate Certificates', path: 'generate-certificates', icon: FileBadge },
   ],

@@ -15,6 +15,7 @@ import EventAnalytics from './pages/admin/EventAnalytics';
 
 // Organiser
 import CreateEvent from './pages/organiser/CreateEvent';
+import ManageEvents from './pages/organiser/ManageEvents';
 import MarkAttendance from './pages/organiser/MarkAttendance';
 import GenerateCertificates from './pages/organiser/GenerateCertificates';
 
@@ -69,6 +70,7 @@ export default function App() {
 
         {/* Organiser */}
         <Route path="create-event" element={<CreateEvent />} />
+        <Route path="my-events" element={<ManageEvents />} />
         <Route path="attendance" element={<MarkAttendance />} />
         <Route path="generate-certificates" element={<GenerateCertificates />} />
 

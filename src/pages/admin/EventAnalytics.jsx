@@ -8,7 +8,9 @@ import {
   UserCheck,
   Award,
   Loader2,
+  Download,
 } from 'lucide-react';
+import * as XLSX from 'xlsx';
 
 export default function EventAnalytics() {
   const [analytics, setAnalytics] = useState(null);
@@ -27,6 +29,42 @@ export default function EventAnalytics() {
     };
     fetchAnalytics();
   }, []);
+
+  const [downloadingCerts, setDownloadingCerts] = useState(false);
+
+  const downloadAllCertificates = async () => {
+    setDownloadingCerts(true);
+    try {
+      const { data } = await API.get('/certificates/admin/all');
+      if (!data || data.length === 0) {
+        alert('No certificates have been issued yet.');
+        return;
+      }
+
+      const headers = [['Certificate ID', 'Student Name', 'Event', 'Issue Date']];
+      const rows = data.map(cert => [
+        cert._id,
+        cert.studentName,
+        cert.eventId ? cert.eventId.title : 'N/A',
+        new Date(cert.issuedAt).toLocaleDateString()
+      ]);
+
+      const worksheetData = [...headers, ...rows];
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.aoa_to_sheet(worksheetData);
+      
+      const colWidths = [{ wch: 30 }, { wch: 25 }, { wch: 30 }, { wch: 15 }];
+      ws['!cols'] = colWidths;
+
+      XLSX.utils.book_append_sheet(wb, ws, "Certificates");
+      XLSX.writeFile(wb, "all_issued_certificates.xlsx");
+    } catch (err) {
+      console.error('Failed to download certificates:', err);
+      alert('Failed to download certificates.');
+    } finally {
+      setDownloadingCerts(false);
+    }
+  };
 
   if (loading || !analytics) {
     return (
@@ -87,9 +125,19 @@ export default function EventAnalytics() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Event Analytics</h1>
-        <p className="text-gray-500 text-sm mt-1">Overview of platform performance and metrics</p>
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800">Event Analytics</h1>
+          <p className="text-gray-500 text-sm mt-1">Overview of platform performance and metrics</p>
+        </div>
+        <button
+          onClick={downloadAllCertificates}
+          disabled={downloadingCerts}
+          className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white font-medium rounded-xl hover:bg-indigo-700 transition-colors shadow-sm disabled:opacity-70"
+        >
+          {downloadingCerts ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+          Export All Certificates
+        </button>
       </div>
 
       {/* Stat Cards */}

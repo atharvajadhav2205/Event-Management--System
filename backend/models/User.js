@@ -14,6 +14,11 @@ const userSchema = new mongoose.Schema({
     lowercase: true,
     trim: true,
   },
+  phone: {
+    type: String,
+    trim: true,
+    default: '',
+  },
   password: {
     type: String,
     required: [true, 'Password is required'],
@@ -24,6 +29,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ['student', 'organiser', 'admin'],
     default: 'student',
+  },
+  adminId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
   },
   createdAt: {
     type: Date,

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { protect, authorize } = require('../middleware/auth');
+const upload = require('../middleware/upload');
 const {
   createEvent,
   getApprovedEvents,
@@ -12,6 +13,8 @@ const {
   applyToEvent,
   getAppliedEvents,
   getAnalytics,
+  updateEvent,
+  deleteEvent,
 } = require('../controllers/eventController');
 
 // --- Student ---
@@ -20,7 +23,7 @@ router.post('/apply/:id', protect, authorize('student'), applyToEvent);
 router.get('/applied', protect, authorize('student'), getAppliedEvents);
 
 // --- Organiser ---
-router.post('/create', protect, authorize('organiser'), createEvent);
+router.post('/create', protect, authorize('organiser'), upload.array('attachments', 10), createEvent);
 router.get('/my-events', protect, authorize('organiser'), getMyEvents);
 
 // --- Admin ---
@@ -30,4 +33,9 @@ router.put('/:id/approve', protect, authorize('admin'), approveEvent);
 router.put('/:id/reject', protect, authorize('admin'), rejectEvent);
 router.get('/analytics', protect, authorize('admin'), getAnalytics);
 
+// --- Update & Delete (organiser or admin) ---
+router.put('/:id', protect, authorize('organiser', 'admin'), updateEvent);
+router.delete('/:id', protect, authorize('organiser', 'admin'), deleteEvent);
+
 module.exports = router;
+

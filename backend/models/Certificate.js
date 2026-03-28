@@ -11,7 +11,7 @@ const certificateSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
-  certificateUrl: {
+  studentName: {
     type: String,
     default: '',
   },
@@ -21,7 +21,7 @@ const certificateSchema = new mongoose.Schema({
   },
 });
 
-// One certificate per user per event
-certificateSchema.index({ eventId: 1, userId: 1 }, { unique: true });
+// One certificate per user per event per student name
+certificateSchema.index({ eventId: 1, userId: 1, studentName: 1 }, { unique: true });
 
 module.exports = mongoose.model('Certificate', certificateSchema);

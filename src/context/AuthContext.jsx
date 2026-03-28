@@ -43,8 +43,8 @@ export function AuthProvider({ children }) {
    * Signup — call /api/auth/signup, store token + user.
    * @returns {object} The user data from the API
    */
-  const signup = async (name, email, password, role) => {
-    const { data } = await API.post('/auth/signup', { name, email, password, role });
+  const signup = async (name, email, password, role, phone, adminId) => {
+    const { data } = await API.post('/auth/signup', { name, email, password, role, phone, adminId });
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data));
     setToken(data.token);
