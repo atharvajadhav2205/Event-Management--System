@@ -28,7 +28,6 @@ const eventSchema = new mongoose.Schema({
   capacity: {
     type: Number,
     default: 0,
-
   },
   category: {
     type: String,
@@ -54,7 +53,8 @@ const eventSchema = new mongoose.Schema({
       ref: 'User',
     },
   ],
-<<<<<<< HEAD
+
+  // --- From your local branch: Team Registrations & Attachments ---
   registeredStudents: [
     {
       userId: {
@@ -98,15 +98,16 @@ const eventSchema = new mongoose.Schema({
     {
       name: String,
       url: String,
-      type: { type: String },
+      type: { type: String }, // 'image', 'pdf', etc.
     }
   ],
-=======
+
+  // --- From the pulled branch: Certificate Template ---
   certificateTemplate: {
     type: String,
     default: '',
   },
->>>>>>> 89d7a5cd3a06aaa2d82a142694d0465b728c050b
+
   posterUrl: {
     type: String,
     default: '',

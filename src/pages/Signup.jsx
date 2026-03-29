@@ -116,11 +116,17 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-600 via-primary-700 to-purple-800 px-4 py-8">
-      <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full blur-3xl translate-x-1/3 -translate-y-1/3" />
-      <div className="absolute bottom-0 left-0 w-72 h-72 bg-purple-400/10 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2" />
+    <div className="min-h-screen w-full relative overflow-x-hidden">
+      {/* Fixed Background */}
+      <div className="fixed inset-0 bg-gradient-to-br from-primary-600 via-primary-700 to-purple-800 overflow-hidden -z-10">
+        <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full blur-3xl translate-x-1/3 -translate-y-1/3" />
+        <div className="absolute bottom-0 left-0 w-72 h-72 bg-purple-400/10 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2" />
+      </div>
 
-      <div className="w-full max-w-md relative">
+      {/* Content */}
+      <div className="min-h-screen w-full flex flex-col justify-center px-4 py-8">
+
+      <div className="w-full max-w-md relative m-auto py-8">
         <div className="text-center mb-8">
 
           <h1 className="text-3xl font-bold text-white">Create Account</h1>
@@ -324,6 +330,7 @@ export default function Signup() {
               </Link>
             </p>
           )}
+        </div>
         </div>
       </div>
     </div>

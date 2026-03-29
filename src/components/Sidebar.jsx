@@ -59,11 +59,8 @@ export default function Sidebar({ role, open, onClose }) {
       >
         {/* Brand */}
         <div className="flex items-center justify-between h-16 px-5 border-b border-gray-100">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center">
-              <LayoutDashboard className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-lg font-bold text-gray-800 tracking-tight">EventHub</span>
+          <div className="flex items-center">
+             <img src="/logo.png" alt="EventHub Logo" className="h-14 object-contain mix-blend-multiply origin-left scale-110 object-left" />
           </div>
           <button onClick={onClose} className="lg:hidden text-gray-400 hover:text-gray-600">
             <X className="w-5 h-5" />

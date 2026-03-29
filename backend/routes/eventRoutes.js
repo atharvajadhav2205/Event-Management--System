@@ -12,10 +12,14 @@ const {
   rejectEvent,
   applyToEvent,
   getAppliedEvents,
+  getPublicEvents,
   getAnalytics,
   updateEvent,
   deleteEvent,
 } = require('../controllers/eventController');
+
+// --- Public ---
+router.get('/public', getPublicEvents);
 
 // --- Student ---
 router.get('/', protect, getApprovedEvents);
@@ -23,11 +27,17 @@ router.post('/apply/:id', protect, authorize('student'), applyToEvent);
 router.get('/applied', protect, authorize('student'), getAppliedEvents);
 
 // --- Organiser ---
-<<<<<<< HEAD
-router.post('/create', protect, authorize('organiser'), upload.array('attachments', 10), createEvent);
-=======
-router.post('/create', protect, authorize('organiser'), upload.single('certificateTemplate'), createEvent);
->>>>>>> 89d7a5cd3a06aaa2d82a142694d0465b728c050b
+// Resolved Conflict: Combined both 'attachments' and 'certificateTemplate' uploads
+router.post(
+  '/create',
+  protect,
+  authorize('organiser'),
+  upload.fields([
+    { name: 'attachments', maxCount: 10 },
+    { name: 'certificateTemplate', maxCount: 1 }
+  ]),
+  createEvent
+);
 router.get('/my-events', protect, authorize('organiser'), getMyEvents);
 
 // --- Admin ---
@@ -42,4 +52,3 @@ router.put('/:id', protect, authorize('organiser', 'admin'), updateEvent);
 router.delete('/:id', protect, authorize('organiser', 'admin'), deleteEvent);
 
 module.exports = router;
-

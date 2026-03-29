@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import LandingPage from './pages/LandingPage';
 import DashboardLayout from './components/DashboardLayout';
 
 // Student
@@ -47,6 +48,7 @@ export default function App() {
   return (
     <Routes>
       {/* Public */}
+      <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={user ? <Navigate to={`/${user.role}`} replace /> : <Login />} />
       <Route path="/signup" element={user ? <Navigate to={`/${user.role}`} replace /> : <Signup />} />
 
@@ -79,7 +81,7 @@ export default function App() {
       </Route>
 
       {/* Catch-all */}
-      <Route path="*" element={<Navigate to="/login" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }

@@ -81,6 +81,23 @@ const getApprovedEvents = async (req, res) => {
 };
 
 /**
+ * @desc    Get public events (unprotected, for landing page slider)
+ * @route   GET /api/events/public
+ * @access  Public
+ */
+const getPublicEvents = async (req, res) => {
+  try {
+    const events = await Event.find({ status: 'approved' })
+      .populate('organiserId', 'name collegeName') // Avoid exposing emails or sensitive data
+      .sort({ date: -1 })
+      .limit(10); // Limit to top 10 for slider
+    res.json(events);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+/**
  * @desc    Get all events created by the logged-in organiser
  * @route   GET /api/events/my-events
  * @access  Organiser
@@ -469,6 +486,7 @@ module.exports = {
   getMyEvents,
   getPendingEvents,
   getAllEvents,
+  getPublicEvents,
   approveEvent,
   rejectEvent,
   applyToEvent,

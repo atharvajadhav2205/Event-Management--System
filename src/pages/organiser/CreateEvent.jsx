@@ -1,18 +1,15 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import API from '../../api/axios';
-<<<<<<< HEAD
-import { PlusCircle, CalendarDays, Clock, MapPin, Users, AlignLeft, Tag, Image, Trophy, AlertCircle, UsersRound, Bold, Italic, Underline, List, UploadCloud, X, FileText } from 'lucide-react';
-import { useRef } from 'react';
-=======
-import { PlusCircle, CalendarDays, Clock, MapPin, Users, AlignLeft, Tag, Image, Trophy, AlertCircle, FileUp } from 'lucide-react';
->>>>>>> 89d7a5cd3a06aaa2d82a142694d0465b728c050b
-
+import {
+  PlusCircle, CalendarDays, Clock, MapPin, Users, AlignLeft, Tag, Image,
+  Trophy, AlertCircle, UsersRound, Bold, Italic, Underline, List,
+  UploadCloud, X, FileText, FileUp
+} from 'lucide-react';
 import RichTextEditor from '../../components/RichTextEditor';
-
 
 /**
  * CreateEvent — Organiser page for creating a new event.
- * Includes team event support, attachment upload, and rich text description.
+ * Includes team event support, attachment upload, certificate templates, and rich text description.
  */
 export default function CreateEvent() {
   // ── Form state ──────────────────────────────────────────────
@@ -35,11 +32,8 @@ export default function CreateEvent() {
     // Attachments
     attachments: [],
   });
-<<<<<<< HEAD
 
-=======
   const [templateFile, setTemplateFile] = useState(null);
->>>>>>> 89d7a5cd3a06aaa2d82a142694d0465b728c050b
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -106,9 +100,8 @@ export default function CreateEvent() {
     setIsLoading(true);
 
     try {
-<<<<<<< HEAD
       const uploadData = new FormData();
-      
+
       // Append standard fields
       Object.keys(form).forEach((key) => {
         if (key === 'attachments') {
@@ -127,14 +120,20 @@ export default function CreateEvent() {
         }
       });
 
+      // Append Certificate Template if it exists
+      if (templateFile) {
+        uploadData.append('certificateTemplate', templateFile);
+      }
+
       await API.post('/events/create', uploadData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-      
+
       setSubmitted(true);
       setTimeout(() => setSubmitted(false), 3000);
+
       // Reset form to defaults
       setForm({
         title: '', date: '', time: '', location: '', description: '',
@@ -143,37 +142,10 @@ export default function CreateEvent() {
         isTeamEvent: false, minTeamSize: 2, maxTeamSize: 4,
         attachments: [],
       });
-=======
-      // Use FormData to send both text fields and the file
-      const formData = new FormData();
-      formData.append('title', form.title);
-      formData.append('description', form.description);
-      formData.append('date', form.date);
-      formData.append('time', form.time);
-      formData.append('location', form.location);
-      formData.append('collegeName', form.collegeName);
-      formData.append('capacity', Number(form.capacity));
-      formData.append('category', form.category);
-      formData.append('posterUrl', form.posterUrl);
-      formData.append('prizePool', form.prizePool);
-      formData.append('deadlines', form.deadlines);
-
-      if (templateFile) {
-        formData.append('certificateTemplate', templateFile);
-      }
-
-      await API.post('/events/create', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-
-      setSubmitted(true);
-      setTimeout(() => setSubmitted(false), 3000);
-      setForm({ title: '', date: '', time: '', location: '', description: '', capacity: null, category: 'Technology', collegeName: '', posterUrl: '', prizePool: '', deadlines: '' });
       setTemplateFile(null);
-      // Reset file input
       const fileInput = document.getElementById('certificateTemplate');
       if (fileInput) fileInput.value = '';
->>>>>>> 89d7a5cd3a06aaa2d82a142694d0465b728c050b
+
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to create event');
     } finally {
@@ -271,7 +243,6 @@ export default function CreateEvent() {
               />
             </div>
 
-<<<<<<< HEAD
             {/* ── Attachments Upload Section ──────────────── */}
             <div className="p-5 bg-gray-50 border border-gray-200 rounded-xl space-y-4">
               <div>
@@ -328,8 +299,8 @@ export default function CreateEvent() {
             </div>
 
             {/* ════════════════════════════════════════════════
-                 TEAM EVENT SECTION
-                ════════════════════════════════════════════════ */}
+                TEAM EVENT SECTION
+               ════════════════════════════════════════════════ */}
             <div className="rounded-xl border border-gray-200 p-4 space-y-4 bg-gray-50/50">
               {/* Toggle row */}
               <div className="flex items-center justify-between">
@@ -404,8 +375,6 @@ export default function CreateEvent() {
               )}
             </div>
 
-            {/* ── Submit button ────────────────────────────── */}
-=======
             {/* Certificate Template Upload */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">
@@ -439,7 +408,7 @@ export default function CreateEvent() {
               </div>
             </div>
 
->>>>>>> 89d7a5cd3a06aaa2d82a142694d0465b728c050b
+            {/* ── Submit button ────────────────────────────── */}
             <button
               type="submit"
               disabled={isLoading}
