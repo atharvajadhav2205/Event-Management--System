@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import API from '../../api/axios';
 import {
   CalendarDays,
@@ -119,9 +120,8 @@ export default function EventAnalytics() {
     },
   ];
 
-  // Monthly events bar chart data
+  // Monthly events chart data
   const monthlyData = analytics.monthlyEvents || [];
-  const maxEvents = Math.max(...monthlyData.map((d) => d.count), 1);
 
   return (
     <div>
@@ -161,21 +161,52 @@ export default function EventAnalytics() {
         })}
       </div>
 
-      {/* Bar Chart */}
+      {/* Area Chart */}
       {monthlyData.length > 0 && (
         <div className="bg-white rounded-2xl border border-gray-100 shadow-card p-6">
           <h2 className="text-lg font-semibold text-gray-700 mb-6">Monthly Events</h2>
-          <div className="flex items-end gap-4 h-48">
-            {monthlyData.map((d) => (
-              <div key={d._id} className="flex-1 flex flex-col items-center gap-2">
-                <span className="text-xs font-semibold text-gray-600">{d.count}</span>
-                <div
-                  className="w-full bg-gradient-to-t from-primary-500 to-primary-400 rounded-t-lg transition-all duration-500"
-                  style={{ height: `${(d.count / maxEvents) * 100}%` }}
+          <div className="h-72 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart
+                data={monthlyData}
+                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+              >
+                <defs>
+                  <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.4}/>
+                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <XAxis 
+                  dataKey="_id" 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fontSize: 12, fill: '#64748b' }} 
+                  dy={10}
                 />
-                <span className="text-xs text-gray-500">{d._id}</span>
-              </div>
-            ))}
+                <YAxis 
+                  allowDecimals={false}
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fontSize: 12, fill: '#64748b' }} 
+                />
+                <Tooltip 
+                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)' }}
+                  cursor={{ stroke: '#cbd5e1', strokeWidth: 1, strokeDasharray: '4 4' }}
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="count" 
+                  name="Events"
+                  stroke="#6366f1" 
+                  strokeWidth={3}
+                  fillOpacity={1} 
+                  fill="url(#colorCount)" 
+                  activeDot={{ r: 6, strokeWidth: 0, fill: '#4f46e5' }}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
           </div>
         </div>
       )}

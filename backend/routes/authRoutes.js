@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { sendOtp, verifyOtp, signup, login, getAdmins } = require('../controllers/authController');
+const { sendOtp, verifyOtp, signup, login, getAdmins, updateProfile } = require('../controllers/authController');
+const { protect } = require('../middleware/auth');
 
 // POST /api/auth/send-otp — Send OTP
 router.post('/send-otp', sendOtp);
@@ -16,5 +17,8 @@ router.post('/login', login);
 
 // GET /api/auth/admins — Get all admins for signup
 router.get('/admins', getAdmins);
+
+// PUT /api/auth/profile - Update user profile
+router.put('/profile', protect, updateProfile);
 
 module.exports = router;

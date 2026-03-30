@@ -6,7 +6,7 @@ const AuthContext = createContext();
 
 /**
  * Custom hook to access auth state from any component.
- * Returns: { user, token, loading, login, signup, logout }
+ * Returns: { user, token, loading, login, signup, logout, updateProfile }
  */
 export const useAuth = () => useContext(AuthContext);
 
@@ -62,8 +62,20 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
+  /**
+   * Update Profile — call /api/auth/profile, store token + user.
+   */
+  const updateProfile = async (name, phone) => {
+    const { data } = await API.put('/auth/profile', { name, phone });
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data));
+    setToken(data.token);
+    setUser(data);
+    return data;
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, token, loading, login, signup, logout, updateProfile }}>
       {children}
     </AuthContext.Provider>
   );
