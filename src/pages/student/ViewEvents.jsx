@@ -168,10 +168,10 @@ function EventCard({ event, onRegister, onDetails }) {
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
           />
         ) : null}
-        
+
         {/* Fallback pattern (always present but hidden if img loads, shown if no url or img fails) */}
-        <div 
-          className="w-full h-full bg-gradient-to-br from-gray-800 via-gray-900 to-black" 
+        <div
+          className="w-full h-full bg-gradient-to-br from-gray-800 via-gray-900 to-black"
           style={{ display: event.posterUrl ? 'none' : 'block' }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10" />
@@ -293,11 +293,10 @@ function EventCard({ event, onRegister, onDetails }) {
           <button
             onClick={() => onRegister(event)}
             disabled={isFull}
-            className={`flex-[1.2] py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 active:scale-[0.97] ${
-              isFull
-                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                : 'bg-[#4f46e5] text-white hover:bg-indigo-700 shadow-md hover:shadow-lg'
-            }`}
+            className={`flex-[1.2] py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 active:scale-[0.97] ${isFull
+              ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+              : 'bg-[#4f46e5] text-white hover:bg-indigo-700 shadow-md hover:shadow-lg'
+              }`}
           >
             {isFull ? 'Full' : 'Register'}
           </button>
@@ -387,7 +386,7 @@ function DetailsModal({ event, onClose }) {
               About This Event
             </h4>
             <div className="bg-gray-50/50 rounded-xl p-5 border border-gray-100">
-              <div 
+              <div
                 className="prose prose-sm prose-primary max-w-none text-gray-700 leading-relaxed"
                 dangerouslySetInnerHTML={{ __html: event.description || '<p>No description provided.</p>' }}
               />
@@ -509,7 +508,7 @@ function RegisterModal({ event, onClose }) {
       } else {
         await API.post(`/events/apply/${event._id}`, individual);
       }
-      
+
       alert('Successfully registered for the event!');
       onClose(true); // Indicate success to parent component
     } catch (err) {
@@ -557,7 +556,7 @@ function RegisterModal({ event, onClose }) {
                   required
                   value={individual.name}
                   onChange={(e) => setIndividual((p) => ({ ...p, name: e.target.value }))}
-                  placeholder="John Doe"
+                  placeholder="Enter Name"
                   className={inputClass}
                 />
               </div>
@@ -568,7 +567,7 @@ function RegisterModal({ event, onClose }) {
                   required
                   value={individual.email}
                   onChange={(e) => setIndividual((p) => ({ ...p, email: e.target.value }))}
-                  placeholder="john@example.com"
+                  placeholder="Enter Email"
                   className={inputClass}
                 />
               </div>
@@ -579,7 +578,7 @@ function RegisterModal({ event, onClose }) {
                   required
                   value={individual.phone}
                   onChange={(e) => setIndividual((p) => ({ ...p, phone: e.target.value }))}
-                  placeholder="+91 98765 43210"
+                  placeholder="+91"
                   className={inputClass}
                 />
               </div>
@@ -603,7 +602,7 @@ function RegisterModal({ event, onClose }) {
                   required
                   value={individual.yearDept}
                   onChange={(e) => setIndividual((p) => ({ ...p, yearDept: e.target.value }))}
-                  placeholder="e.g. 3rd Year — CSE"
+                  placeholder=""
                   className={inputClass}
                 />
               </div>
@@ -621,7 +620,7 @@ function RegisterModal({ event, onClose }) {
                   required
                   value={teamName}
                   onChange={(e) => setTeamName(e.target.value)}
-                  placeholder="e.g. Code Crusaders"
+                  placeholder="Enter Team Name"
                   className={inputClass}
                 />
               </div>
@@ -817,12 +816,12 @@ export default function ViewEvents() {
       )}
 
       {registerEvent && (
-        <RegisterModal 
-          event={registerEvent} 
+        <RegisterModal
+          event={registerEvent}
           onClose={(success) => {
             setRegisterEvent(null);
             if (success === true) fetchEvents();
-          }} 
+          }}
         />
       )}
     </div>

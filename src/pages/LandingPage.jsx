@@ -57,34 +57,7 @@ const TiltCard = ({ children, className }) => {
   );
 };
 
-const AnimatedCounter = ({ end, label, suffix = "" }) => {
-  const [count, setCount] = useState(0);
-  const counterRef = useRef(null);
-  
-  useGSAP(() => {
-    gsap.to({ val: 0 }, {
-      val: end,
-      duration: 2.5,
-      ease: 'power3.out',
-      scrollTrigger: { 
-        trigger: counterRef.current, 
-        start: "top 85%" 
-      },
-      onUpdate: function() { 
-        setCount(Math.ceil(this.targets()[0].val)); 
-      }
-    });
-  }, { scope: counterRef });
-  
-  return (
-    <div ref={counterRef} className="flex flex-col items-center justify-center p-6">
-       <div className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-blue-600 to-indigo-600 mb-2">
-         {count}{suffix}
-       </div>
-       <div className="text-slate-500 font-medium tracking-wide uppercase text-sm">{label}</div>
-    </div>
-  );
-};
+
 
 // --- Main Page Component ---
 
@@ -239,17 +212,7 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* Stats Parallax Counter Section */}
-      <div className="py-20 relative overflow-hidden bg-white border-y border-slate-100">
-         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-slate-100">
-               <AnimatedCounter end={500} label="Events Hosted" suffix="+" />
-               <AnimatedCounter end={50} label="Colleges" suffix="+" />
-               <AnimatedCounter end={12} label="Hackathons" suffix="k" />
-               <AnimatedCounter end={100} label="Success Rate" suffix="%" />
-            </div>
-         </div>
-      </div>
+
 
       {/* Features Section (3D Tilt) */}
       <div id="features-section" className="py-32 bg-slate-50">

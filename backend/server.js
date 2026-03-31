@@ -24,6 +24,7 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/events', require('./routes/eventRoutes'));
 app.use('/api/attendance', require('./routes/attendanceRoutes'));
 app.use('/api/certificates', require('./routes/certificateRoutes'));
+app.use('/api/announcements', require('./routes/announcementRoutes'));
 
 // Health-check
 app.get('/', (req, res) => {

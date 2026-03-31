@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
-import { Menu, Edit2, X, Check } from 'lucide-react';
+import { Menu, Edit2, X, Check, Bell } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import API from '../api/axios';
 
 const roleBadgeColors = {
   student: 'bg-blue-100 text-blue-700',
@@ -16,6 +17,9 @@ export default function Navbar({ role, onMenuToggle }) {
   const [isSaving, setIsSaving] = useState(false);
 
   const dropdownRef = useRef(null);
+  const bellDropdownRef = useRef(null);
+  const [announcements, setAnnouncements] = useState([]);
+  const [isAnnouncementsOpen, setIsAnnouncementsOpen] = useState(false);
 
   const badgeColor = roleBadgeColors[role] || 'bg-gray-100 text-gray-700';
   const displayRole = role.charAt(0).toUpperCase() + role.slice(1);
@@ -25,7 +29,16 @@ export default function Navbar({ role, onMenuToggle }) {
     if (user) {
       setEditData({ name: user.name || '', phone: user.phone || '' });
     }
-  }, [user]);
+    if (role === 'student' && user) {
+      const fetchAnns = async () => {
+        try {
+          const { data } = await API.get('/announcements/student');
+          setAnnouncements(data);
+        } catch(err) { console.error('Failed fetching announcements', err); }
+      };
+      fetchAnns();
+    }
+  }, [user, role]);
 
   // Handle outside click
   useEffect(() => {
@@ -33,6 +46,9 @@ export default function Navbar({ role, onMenuToggle }) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsProfileOpen(false);
         setIsEditing(false);
+      }
+      if (bellDropdownRef.current && !bellDropdownRef.current.contains(event.target)) {
+        setIsAnnouncementsOpen(false);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
@@ -65,7 +81,53 @@ export default function Navbar({ role, onMenuToggle }) {
       </div>
 
       {/* Right */}
-      <div className="flex items-center justify-end relative" ref={dropdownRef}>
+      <div className="flex items-center justify-end gap-1 sm:gap-3">
+
+        {role === 'student' && (
+          <div className="relative" ref={bellDropdownRef}>
+            <button
+              onClick={() => {
+                setIsAnnouncementsOpen(!isAnnouncementsOpen);
+                setIsProfileOpen(false);
+              }}
+              className="relative p-2 rounded-xl hover:bg-gray-100 transition-colors text-gray-500 hover:text-gray-700"
+            >
+              <Bell className="w-5 h-5" />
+              {announcements.length > 0 && (
+                <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
+              )}
+            </button>
+            
+            {isAnnouncementsOpen && (
+              <div className="absolute top-14 right-0 w-80 bg-white border border-gray-100 shadow-xl rounded-2xl p-4 z-50 animate-in fade-in slide-in-from-top-2 duration-200 overflow-hidden">
+                <div className="pb-3 mb-2 border-b border-gray-100 flex items-center justify-between">
+                  <h3 className="font-bold text-gray-800 flex items-center gap-2"><Bell className="w-4 h-4 text-indigo-500" /> Notifications</h3>
+                  <span className="text-xs bg-indigo-50 text-indigo-600 font-bold px-2 py-0.5 rounded-md">{announcements.length} New</span>
+                </div>
+                <div className="max-h-80 overflow-y-auto pr-1 space-y-3 custom-scrollbar">
+                  {announcements.length === 0 ? (
+                    <p className="text-sm text-center text-gray-400 py-4">You have no new notifications.</p>
+                  ) : (
+                    announcements.map(ann => (
+                      <div key={ann._id} className="bg-gray-50 p-3 rounded-xl border border-gray-100/50 relative overflow-hidden group">
+                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-indigo-400"></div>
+                        <div className="flex justify-between items-start mb-1">
+                          <h4 className="text-sm font-bold text-gray-800 line-clamp-1">{ann.eventId?.title || 'Unknown Event'}</h4>
+                          <span className="text-[10px] text-gray-400 whitespace-nowrap ml-2">{new Date(ann.createdAt).toLocaleDateString()}</span>
+                        </div>
+                        <h5 className="text-xs font-semibold text-indigo-600 mb-0.5">{ann.title}</h5>
+                        <p className="text-xs text-gray-500 line-clamp-3 leading-relaxed">{ann.message}</p>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Profile Parent */}
+        <div className="relative" ref={dropdownRef}>
         <div 
           className="flex items-center gap-3 sm:border-l sm:border-gray-200 sm:pl-4 cursor-pointer hover:bg-gray-50 p-2 rounded-xl transition-colors"
           onClick={() => {
@@ -194,6 +256,7 @@ export default function Navbar({ role, onMenuToggle }) {
             )}
           </div>
         )}
+        </div>
       </div>
     </header>
   );

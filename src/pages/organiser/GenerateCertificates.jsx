@@ -232,7 +232,7 @@ export default function GenerateCertificates() {
     // Use backend proxy to download — avoids Cloudinary CORS issues
     const token = localStorage.getItem('token');
     const downloadUrl = `${BACKEND_URL}/api/certificates/download/${certId}`;
-    
+
     // Create a temporary link with auth token
     const link = document.createElement('a');
     link.href = downloadUrl + `?token=${token}`;
@@ -297,13 +297,12 @@ export default function GenerateCertificates() {
                 <div key={s.id} className="flex items-center gap-2">
                   <button
                     onClick={() => setStep(s.id)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
-                      isActive
+                    className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${isActive
                         ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md shadow-amber-200'
                         : isComplete
-                        ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
-                        : 'bg-gray-50 text-gray-400 border border-gray-200'
-                    }`}
+                          ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
+                          : 'bg-gray-50 text-gray-400 border border-gray-200'
+                      }`}
                   >
                     {isComplete ? (
                       <CheckCircle className="w-4 h-4" />
@@ -510,7 +509,7 @@ export default function GenerateCertificates() {
                         type="text"
                         value={sampleName}
                         onChange={(e) => setSampleName(e.target.value)}
-                        placeholder="John Doe"
+                        placeholder="Enter Name"
                         className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-transparent outline-none text-sm"
                       />
                     </div>
@@ -687,10 +686,10 @@ export default function GenerateCertificates() {
                             <td className="px-6 py-4 text-gray-500">
                               {cert.issuedAt
                                 ? new Date(cert.issuedAt).toLocaleDateString('en-IN', {
-                                    day: 'numeric',
-                                    month: 'short',
-                                    year: 'numeric',
-                                  })
+                                  day: 'numeric',
+                                  month: 'short',
+                                  year: 'numeric',
+                                })
                                 : '—'}
                             </td>
                             <td className="px-6 py-4 text-right">

@@ -16,6 +16,7 @@ import {
   AlertTriangle,
   ListChecks,
   Download,
+  Megaphone,
 } from 'lucide-react';
 import { exportParticipants } from '../../utils/exportParticipants';
 
@@ -270,6 +271,62 @@ function DeleteModal({ event, onClose, onDeleted }) {
 }
 
 /* ═══════════════════════════════════════════════
+   ANNOUNCE MODAL
+   ═══════════════════════════════════════════════ */
+function AnnounceModal({ event, onClose, onAnnounced }) {
+  const backdropRef = useRef(null);
+  const [form, setForm] = useState({ title: '', message: '' });
+  const [sending, setSending] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSending(true);
+    try {
+      await API.post(`/announcements/${event._id}`, form);
+      onAnnounced('Announcement sent and students notified via email!');
+    } catch (err) {
+      onAnnounced(err.response?.data?.message || 'Failed to send announcement', 'error');
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <div ref={backdropRef} onClick={(e) => e.target === backdropRef.current && onClose()} className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeIn">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 animate-scaleIn border border-gray-100">
+        <div className="flex justify-between items-center mb-2">
+          <div className="flex items-center gap-2">
+            <div className="bg-indigo-100 p-2 rounded-xl text-indigo-600"><Megaphone className="w-5 h-5"/></div>
+            <h3 className="text-xl font-bold text-gray-800">Post Announcement</h3>
+          </div>
+          <button type="button" onClick={onClose} className="p-1.5 hover:bg-gray-100 text-gray-400 hover:text-gray-600 rounded-full transition-colors"><X className="w-5 h-5"/></button>
+        </div>
+        <p className="text-sm text-gray-500 mb-5 ml-11">Notify all registered students for <strong className="text-gray-700">{event.title}</strong>.</p>
+        
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Announcement Title</label>
+            <input required type="text" placeholder="e.g., Venue Change, Event Postponed" value={form.title} onChange={e => setForm(p => ({...p, title: e.target.value}))} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-sm" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
+            <textarea required rows="4" placeholder="Type your detailed message here..." value={form.message} onChange={e => setForm(p => ({...p, message: e.target.value}))} className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-sm resize-none"></textarea>
+          </div>
+          
+          <div className="flex gap-3 pt-2">
+            <button type="button" onClick={onClose} className="flex-1 py-2.5 text-sm font-medium rounded-xl border border-gray-200 text-gray-700 hover:bg-gray-50 transition-all">Cancel</button>
+            <button disabled={sending} type="submit" className="flex-1 py-2.5 text-sm font-semibold rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 shadow-md transition-all disabled:opacity-60 flex items-center justify-center gap-2">
+              {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Megaphone className="w-4 h-4" />}
+              {sending ? 'Broadcasting...' : 'Publish'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════
    MAIN – MANAGE EVENTS PAGE
    ═══════════════════════════════════════════════ */
 export default function ManageEvents() {
@@ -277,6 +334,7 @@ export default function ManageEvents() {
   const [loading, setLoading] = useState(true);
   const [editEvent, setEditEvent] = useState(null);
   const [deleteEvent, setDeleteEvent] = useState(null);
+  const [announceEvent, setAnnounceEvent] = useState(null);
   const [toast, setToast] = useState(null);
 
   const fetchEvents = async () => {
@@ -380,22 +438,28 @@ export default function ManageEvents() {
                 <div className="flex-1" />
 
                 {/* Action buttons */}
-                <div className="flex gap-2 pt-3 border-t border-gray-50">
+                <div className="grid grid-cols-2 gap-2 pt-3 border-t border-gray-50">
                   <button
                     onClick={() => exportParticipants(event, 'excel')}
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-semibold rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition-colors"
+                    className="flex items-center justify-center gap-1.5 py-2 text-xs font-semibold rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition-colors"
                   >
                     <Download className="w-3.5 h-3.5" /> List
                   </button>
                   <button
+                    onClick={() => setAnnounceEvent(event)}
+                    className="flex items-center justify-center gap-1.5 py-2 text-xs font-semibold rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors"
+                  >
+                    <Megaphone className="w-3.5 h-3.5" /> Announce
+                  </button>
+                  <button
                     onClick={() => setEditEvent(event)}
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-semibold rounded-xl bg-primary-50 text-primary-600 hover:bg-primary-100 transition-colors"
+                    className="flex items-center justify-center gap-1.5 py-2 text-xs font-semibold rounded-xl bg-primary-50 text-primary-600 hover:bg-primary-100 transition-colors"
                   >
                     <Pencil className="w-3.5 h-3.5" /> Edit
                   </button>
                   <button
                     onClick={() => setDeleteEvent(event)}
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-semibold rounded-xl bg-red-50 text-red-500 hover:bg-red-100 transition-colors"
+                    className="flex items-center justify-center gap-1.5 py-2 text-xs font-semibold rounded-xl bg-red-50 text-red-500 hover:bg-red-100 transition-colors"
                   >
                     <Trash2 className="w-3.5 h-3.5" /> Delete
                   </button>
@@ -409,6 +473,7 @@ export default function ManageEvents() {
       {/* Modals */}
       {editEvent && <EditModal event={editEvent} onClose={() => setEditEvent(null)} onSaved={handleSaved} />}
       {deleteEvent && <DeleteModal event={deleteEvent} onClose={() => setDeleteEvent(null)} onDeleted={handleDeleted} />}
+      {announceEvent && <AnnounceModal event={announceEvent} onClose={() => setAnnounceEvent(null)} onAnnounced={(msg, type) => { setAnnounceEvent(null); showToast(msg, type); }} />}
     </div>
   );
 }
