@@ -54,7 +54,7 @@ const getTransporter = async () => {
  * @param {string} subject - Email subject
  * @param {string} htmlContent - Email body HTML
  */
-const sendEmail = async (to, subject, htmlContent) => {
+const sendEmail = async (to, subject, htmlContent, attachments = []) => {
   try {
     const transporter = await getTransporter();
 
@@ -63,6 +63,7 @@ const sendEmail = async (to, subject, htmlContent) => {
       to,
       subject,
       html: htmlContent,
+      attachments,
     };
 
     const info = await transporter.sendMail(mailOptions);

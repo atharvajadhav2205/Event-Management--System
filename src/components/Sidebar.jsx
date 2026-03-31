@@ -12,18 +12,22 @@ import {
   BarChart3,
   LogOut,
   X,
+  Ticket,
+  ScanLine,
 } from 'lucide-react';
 
 const menuMap = {
   student: [
     { label: 'View Events', path: 'events', icon: CalendarDays },
     { label: 'Applied Events', path: 'applied', icon: ClipboardCheck },
+    { label: 'Event Tickets', path: 'tickets', icon: Ticket },
     { label: 'Certificates', path: 'certificates', icon: Award },
   ],
   organiser: [
     { label: 'Create Event', path: 'create-event', icon: PlusCircle },
     { label: 'My Events', path: 'my-events', icon: CalendarDays },
-    { label: 'Mark Attendance', path: 'attendance', icon: UserCheck },
+    { label: 'View Attendance', path: 'attendance', icon: UserCheck },
+    { label: 'Scan Tickets', path: 'scan-tickets', icon: ScanLine },
     { label: 'Generate Certificates', path: 'generate-certificates', icon: FileBadge },
   ],
   admin: [

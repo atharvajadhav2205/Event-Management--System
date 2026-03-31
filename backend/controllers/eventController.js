@@ -3,7 +3,8 @@ const Attendance = require('../models/Attendance');
 const Certificate = require('../models/Certificate');
 const User = require('../models/User');
 const { sendEmail } = require('../utils/emailService');
-
+const QRCode = require('qrcode');
+const PDFDocument = require('pdfkit');
 /**
  * @desc    Create a new event (status defaults to 'pending')
  * @route   POST /api/events/create
@@ -273,26 +274,98 @@ const applyToEvent = async (req, res) => {
     // Send Confirmation Email
     const user = await User.findById(req.user._id);
     const subject = `Registration Confirmed: ${event.title}`;
+    
+    // Generate Digital Ticket QR Code and PDF
+    const ticketId = `${event._id}-${req.user._id}`;
+    let qrCodeDataUrl = '';
+    let attachments = [];
+    const uniqueCid = `ticketqr-${ticketId}@eventhub`;
+
+    try {
+      qrCodeDataUrl = await QRCode.toDataURL(ticketId, {
+        color: { dark: '#000000', light: '#ffffff' },
+        width: 300,
+        margin: 2
+      });
+
+      const qrBase64Data = qrCodeDataUrl.split(',')[1];
+      
+      // 1. CID Attachment for Inline rendering in Email Body
+      attachments.push({
+        filename: 'qr-ticket.png',
+        path: qrCodeDataUrl,
+        cid: uniqueCid
+      });
+
+      // 2. Generate PDF Document Attachment
+      const pdfBuffer = await new Promise((resolve) => {
+        const doc = new PDFDocument({ size: [400, 600], margins: { top: 50, bottom: 50, left: 50, right: 50 } });
+        let buffers = [];
+        doc.on('data', buffers.push.bind(buffers));
+        doc.on('end', () => resolve(Buffer.concat(buffers)));
+
+        // PDF Styling & Content
+        doc.fontSize(24).fillColor('#4f46e5').text('Event Ticket', { align: 'center' });
+        doc.moveDown(1);
+        doc.fontSize(16).fillColor('#111827').text(event.title, { align: 'center' });
+        doc.moveDown(0.5);
+        doc.fontSize(12).fillColor('#6b7280').text(`Attendee: ${user.name}`, { align: 'center' });
+        doc.moveDown(2);
+        
+        // Stamp the QR image
+        doc.image(Buffer.from(qrBase64Data, 'base64'), 100, doc.y, { width: 200, align: 'center' });
+        doc.y += 220; // move past the image
+        
+        doc.fontSize(10).fillColor('#9ca3af').text(`ID: ${ticketId}`, { align: 'center' });
+        doc.moveDown(2);
+
+        // Details
+        doc.fontSize(12).fillColor('#374151');
+        doc.text(`Date: ${event.date}`);
+        doc.text(`Time: ${event.time}`);
+        doc.text(`Venue: ${event.location} ${event.collegeName ? `(${event.collegeName})` : ''}`);
+        
+        doc.end();
+      });
+
+      attachments.push({
+        filename: `${event.title.replace(/\s+/g, '_')}_Ticket.pdf`,
+        content: pdfBuffer,
+        contentType: 'application/pdf'
+      });
+
+    } catch(err) {
+      console.error("Failed to generate QR or PDF for email:", err);
+    }
+
     const htmlContent = `
-      <div style="font-family: Arial, sans-serif; padding: 20px;">
+      <div style="font-family: Arial, sans-serif; padding: 20px; color: #374151;">
         <h2>Registration Successful!</h2>
         <p>Hi ${user.name},</p>
-        <p>You have successfully registered for <strong>${event.title}</strong>.</p>
+        <p>You have successfully registered for <strong>${event.title}</strong>. A PDF version of your ticket has been securely attached to this email.</p>
+        
+        <div style="text-align: center; margin: 30px 0; background-color: #f9fafb; padding: 20px; border-radius: 12px; border: 1px solid #f3f4f6;">
+          <h3 style="color: #4f46e5; margin-bottom: 5px; margin-top: 0;">Your Digital Ticket</h3>
+          <p style="font-size: 13px; color: #6b7280; margin-top: 0; margin-bottom: 15px;">Show this QR code at the venue to mark your attendance</p>
+          ${qrCodeDataUrl ? `<img src="cid:${uniqueCid}" alt="Ticket QR Code" style="width: 200px; height: 200px; border: 1px solid #e5e7eb; border-radius: 12px; padding: 10px; background: white;" />` : ''}
+          <p style="font-size: 12px; color: #9ca3af; margin-top: 15px; font-family: monospace; letter-spacing: 1px;">ID: ${ticketId.substring(0, 12)}...</p>
+        </div>
+
         <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
-          <p><strong>Date:</strong> ${event.date}</p>
-          <p><strong>Time:</strong> ${event.time}</p>
-          <p><strong>Venue:</strong> ${event.location} ${event.collegeName ? `(${event.collegeName})` : ''}</p>
-          <p><strong>Registration ID:</strong> ${event._id}-${req.user._id}</p>
+          <p style="margin: 8px 0;"><strong>Date:</strong> ${event.date}</p>
+          <p style="margin: 8px 0;"><strong>Time:</strong> ${event.time}</p>
+          <p style="margin: 8px 0;"><strong>Venue:</strong> ${event.location} ${event.collegeName ? `(${event.collegeName})` : ''}</p>
+          <p style="margin: 8px 0;"><strong>Registration ID:</strong> <span style="font-family: monospace;">${ticketId}</span></p>
           ${event.isTeamEvent ? `
             <hr style="border: 1px solid #e5e7eb; margin: 15px 0;" />
-            <p><strong>Team Name:</strong> ${teamName}</p>
-            <p><strong>Team Size:</strong> ${teamMembers.length} members</p>
+            <p style="margin: 8px 0;"><strong>Team Name:</strong> ${teamName}</p>
+            <p style="margin: 8px 0;"><strong>Team Size:</strong> ${teamMembers.length} members</p>
           ` : ''}
         </div>
         <p>We look forward to seeing you there!</p>
       </div>
     `;
-    await sendEmail(user.email, subject, htmlContent);
+    await sendEmail(user.email, subject, htmlContent, attachments);
 
     res.json({ message: 'Successfully applied to event', event });
   } catch (error) {

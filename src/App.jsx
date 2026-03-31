@@ -9,6 +9,7 @@ import DashboardLayout from './components/DashboardLayout';
 import ViewEvents from './pages/student/ViewEvents';
 import AppliedEvents from './pages/student/AppliedEvents';
 import Certificates from './pages/student/Certificates';
+import MyTickets from './pages/student/MyTickets';
 
 // Admin
 import ApproveEvents from './pages/admin/ApproveEvents';
@@ -19,6 +20,7 @@ import CreateEvent from './pages/organiser/CreateEvent';
 import ManageEvents from './pages/organiser/ManageEvents';
 import MarkAttendance from './pages/organiser/MarkAttendance';
 import GenerateCertificates from './pages/organiser/GenerateCertificates';
+import ScanTickets from './pages/organiser/ScanTickets';
 
 /**
  * ProtectedRoute — redirects to /login if not authenticated.
@@ -64,6 +66,7 @@ export default function App() {
         {/* Student */}
         <Route path="events" element={<ViewEvents />} />
         <Route path="applied" element={<AppliedEvents />} />
+        <Route path="tickets" element={<MyTickets />} />
         <Route path="certificates" element={<Certificates />} />
 
         {/* Admin */}
@@ -74,6 +77,7 @@ export default function App() {
         <Route path="create-event" element={<CreateEvent />} />
         <Route path="my-events" element={<ManageEvents />} />
         <Route path="attendance" element={<MarkAttendance />} />
+        <Route path="scan-tickets" element={<ScanTickets />} />
         <Route path="generate-certificates" element={<GenerateCertificates />} />
 
         {/* Default redirect for each role */}

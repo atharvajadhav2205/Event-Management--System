@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import API from '../../api/axios';
-import { CheckSquare, Save, Loader2, ChevronDown } from 'lucide-react';
+import { Loader2, ChevronDown, Users } from 'lucide-react';
 
 export default function MarkAttendance() {
   const [myEvents, setMyEvents] = useState([]);
@@ -8,8 +8,6 @@ export default function MarkAttendance() {
   const [attendees, setAttendees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingAttendees, setLoadingAttendees] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const [saving, setSaving] = useState(false);
 
   // Fetch organiser's events
   useEffect(() => {
@@ -46,33 +44,6 @@ export default function MarkAttendance() {
     fetchAttendees();
   }, [selectedEvent]);
 
-  const toggle = (id) => {
-    setAttendees((prev) =>
-      prev.map((a) =>
-        a._id === id ? { ...a, status: a.status === 'present' ? 'absent' : 'present' } : a
-      )
-    );
-  };
-
-  const handleSave = async () => {
-    setSaving(true);
-    try {
-      await API.post('/attendance/mark', {
-        eventId: selectedEvent,
-        records: attendees.map((a) => ({
-          userId: a._id,
-          status: a.status,
-        })),
-      });
-      setSaved(true);
-      setTimeout(() => setSaved(false), 3000);
-    } catch (err) {
-      console.error('Error saving attendance:', err);
-    } finally {
-      setSaving(false);
-    }
-  };
-
   const presentCount = attendees.filter((a) => a.status === 'present').length;
 
   if (loading) {
@@ -87,22 +58,13 @@ export default function MarkAttendance() {
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Mark Attendance</h1>
+          <h1 className="text-2xl font-bold text-gray-800">View Attendance Roster</h1>
           <p className="text-gray-500 text-sm mt-1">
             {attendees.length > 0
-              ? `${presentCount}/${attendees.length} marked present`
+              ? `${presentCount}/${attendees.length} marked present via QR Scanner`
               : 'Select an event to view attendees'}
           </p>
         </div>
-        {attendees.length > 0 && (
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="flex items-center gap-2 px-5 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-semibold hover:bg-primary-700 active:scale-[0.98] transition-all shadow-sm disabled:opacity-60"
-          >
-            <Save className="w-4 h-4" /> {saving ? 'Saving...' : 'Save Attendance'}
-          </button>
-        )}
       </div>
 
       {/* Event Selector */}
@@ -125,12 +87,6 @@ export default function MarkAttendance() {
         </div>
       </div>
 
-      {saved && (
-        <div className="mb-4 p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-700 text-sm font-medium">
-          ✓ Attendance saved successfully!
-        </div>
-      )}
-
       {loadingAttendees ? (
         <div className="flex items-center justify-center h-32">
           <Loader2 className="w-6 h-6 text-primary-500 animate-spin" />
@@ -140,9 +96,9 @@ export default function MarkAttendance() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-gray-50 text-gray-500 text-left">
+                <tr className="bg-gray-50 text-gray-500 text-left border-b border-gray-100">
                   <th className="px-6 py-4 font-semibold w-12">
-                    <CheckSquare className="w-4 h-4" />
+                     <Users className="w-4 h-4" />
                   </th>
                   <th className="px-6 py-4 font-semibold">Name</th>
                   <th className="px-6 py-4 font-semibold">Email</th>
@@ -150,27 +106,23 @@ export default function MarkAttendance() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {attendees.map((a) => (
+                {attendees.map((a, i) => (
                   <tr
                     key={a._id}
-                    className={`hover:bg-gray-50/60 transition-colors cursor-pointer ${a.status === 'present' ? 'bg-emerald-50/40' : ''}`}
-                    onClick={() => toggle(a._id)}
+                    className={`transition-colors ${a.status === 'present' ? 'bg-emerald-50/20' : ''}`}
                   >
-                    <td className="px-6 py-4">
-                      <input
-                        type="checkbox"
-                        checked={a.status === 'present'}
-                        onChange={() => toggle(a._id)}
-                        className="w-4 h-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 cursor-pointer"
-                      />
+                    <td className="px-6 py-4 text-gray-400 font-medium">
+                      {i + 1}
                     </td>
                     <td className="px-6 py-4 font-medium text-gray-800">{a.name}</td>
                     <td className="px-6 py-4 text-gray-500">{a.email}</td>
                     <td className="px-6 py-4">
                       <span className={`text-xs font-semibold px-2.5 py-1 rounded-lg ${
-                        a.status === 'present' ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500'
+                        a.status === 'present' 
+                          ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' 
+                          : 'bg-gray-100 text-gray-500 border border-gray-200'
                       }`}>
-                        {a.status === 'present' ? 'Present' : 'Absent'}
+                        {a.status === 'present' ? 'Scanned & Present' : 'Absent'}
                       </span>
                     </td>
                   </tr>

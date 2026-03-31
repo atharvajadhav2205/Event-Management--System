@@ -19,6 +19,7 @@
     "nodemailer": "^8.0.2",
     "pdf-lib": "^1.17.1",
     "pdfkit": "^0.18.0",
+    "qrcode": "^1.5.4",
     "sharp": "^0.34.5"
   },
   "devDependencies": {
