@@ -21,107 +21,7 @@ import {
 // MOCK DATA — used as fallback when the API is unreachable
 // so the UI can be previewed without the backend running.
 // ─────────────────────────────────────────────────────────────
-const MOCK_EVENTS = [
-  {
-    _id: '1',
-    title: 'Tech Summit 2026',
-    collegeName: 'IIT Delhi',
-    date: '2026-04-20',
-    time: '10:00',
-    location: 'Main Auditorium',
-    description:
-      'A flagship technology conference bringing together industry leaders, researchers, and students to explore cutting-edge innovations in AI, blockchain, and quantum computing.',
-    capacity: 200,
-    registered: 142,
-    category: 'Technology',
-    posterUrl: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&q=80',
-    isTeamEvent: true,
-    minTeamSize: 2,
-    maxTeamSize: 4,
-    prizePool: '₹50,000',
-  },
-  {
-    _id: '2',
-    title: 'Cultural Night',
-    collegeName: 'NIT Trichy',
-    date: '2026-05-15',
-    time: '18:00',
-    location: 'Open Air Theatre',
-    description:
-      'An enchanting evening of dance, music, and theatrical performances celebrating the diverse cultural heritage of our campus community.',
-    capacity: 500,
-    registered: 387,
-    category: 'Cultural',
-    posterUrl: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&q=80',
-    isTeamEvent: false,
-  },
-  {
-    _id: '3',
-    title: 'Startup Pitch Day',
-    collegeName: 'BITS Pilani',
-    date: '2026-06-01',
-    time: '09:00',
-    location: 'Innovation Hub',
-    description:
-      'Present your startup ideas to a panel of seasoned investors and mentors. Win funding opportunities, mentorship, and incubation support for your venture.',
-    capacity: 50,
-    registered: 48,
-    category: 'Entrepreneurship',
-    posterUrl: 'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=600&q=80',
-    isTeamEvent: true,
-    minTeamSize: 1,
-    maxTeamSize: 3,
-    prizePool: '₹1,00,000',
-  },
-  {
-    _id: '4',
-    title: 'Web Dev Workshop',
-    collegeName: 'VIT Vellore',
-    date: '2026-04-28',
-    time: '14:00',
-    location: 'Computer Lab 3',
-    description:
-      'Hands-on workshop covering modern full-stack development with React, Node.js, and MongoDB. Perfect for beginners looking to build real-world projects.',
-    capacity: 60,
-    registered: 22,
-    category: 'Workshop',
-    posterUrl: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&q=80',
-    isTeamEvent: false,
-  },
-  {
-    _id: '5',
-    title: 'AI Hackathon',
-    collegeName: 'IIIT Hyderabad',
-    date: '2026-07-10',
-    time: '08:00',
-    location: 'Innovation Center',
-    description:
-      'A 24-hour AI hackathon challenging teams to build intelligent solutions addressing real-world problems. Mentorship and API credits provided.',
-    capacity: 100,
-    registered: 76,
-    category: 'Technology',
-    posterUrl: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=600&q=80',
-    isTeamEvent: true,
-    minTeamSize: 3,
-    maxTeamSize: 5,
-    prizePool: '₹75,000',
-  },
-  {
-    _id: '6',
-    title: 'Art Exhibition',
-    collegeName: 'JNU Delhi',
-    date: '2026-05-20',
-    time: '11:00',
-    location: 'Gallery Hall',
-    description:
-      'Showcasing student artworks spanning painting, sculpture, digital art, and mixed media. Open to all art enthusiasts and creators.',
-    capacity: 150,
-    registered: 45,
-    category: 'Art',
-    posterUrl: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=600&q=80',
-    isTeamEvent: false,
-  },
-];
+
 
 // ─────────────────────────────────────────────────────────────
 // HELPER — format a date string nicely
@@ -168,10 +68,10 @@ function EventCard({ event, onRegister, onDetails }) {
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
           />
         ) : null}
-        
+
         {/* Fallback pattern (always present but hidden if img loads, shown if no url or img fails) */}
-        <div 
-          className="w-full h-full bg-gradient-to-br from-gray-800 via-gray-900 to-black" 
+        <div
+          className="w-full h-full bg-gradient-to-br from-gray-800 via-gray-900 to-black"
           style={{ display: event.posterUrl ? 'none' : 'block' }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10" />
@@ -293,11 +193,10 @@ function EventCard({ event, onRegister, onDetails }) {
           <button
             onClick={() => onRegister(event)}
             disabled={isFull}
-            className={`flex-[1.2] py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 active:scale-[0.97] ${
-              isFull
-                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                : 'bg-[#4f46e5] text-white hover:bg-indigo-700 shadow-md hover:shadow-lg'
-            }`}
+            className={`flex-[1.2] py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 active:scale-[0.97] ${isFull
+              ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+              : 'bg-[#4f46e5] text-white hover:bg-indigo-700 shadow-md hover:shadow-lg'
+              }`}
           >
             {isFull ? 'Full' : 'Register'}
           </button>
@@ -387,7 +286,7 @@ function DetailsModal({ event, onClose }) {
               About This Event
             </h4>
             <div className="bg-gray-50/50 rounded-xl p-5 border border-gray-100">
-              <div 
+              <div
                 className="prose prose-sm prose-primary max-w-none text-gray-700 leading-relaxed"
                 dangerouslySetInnerHTML={{ __html: event.description || '<p>No description provided.</p>' }}
               />
@@ -509,7 +408,7 @@ function RegisterModal({ event, onClose }) {
       } else {
         await API.post(`/events/apply/${event._id}`, individual);
       }
-      
+
       alert('Successfully registered for the event!');
       onClose(true); // Indicate success to parent component
     } catch (err) {
@@ -557,7 +456,7 @@ function RegisterModal({ event, onClose }) {
                   required
                   value={individual.name}
                   onChange={(e) => setIndividual((p) => ({ ...p, name: e.target.value }))}
-                  placeholder="John Doe"
+                  placeholder="Enter name"
                   className={inputClass}
                 />
               </div>
@@ -568,7 +467,7 @@ function RegisterModal({ event, onClose }) {
                   required
                   value={individual.email}
                   onChange={(e) => setIndividual((p) => ({ ...p, email: e.target.value }))}
-                  placeholder="john@example.com"
+                  placeholder="Enter email"
                   className={inputClass}
                 />
               </div>
@@ -579,7 +478,7 @@ function RegisterModal({ event, onClose }) {
                   required
                   value={individual.phone}
                   onChange={(e) => setIndividual((p) => ({ ...p, phone: e.target.value }))}
-                  placeholder="+91 98765 43210"
+                  placeholder="+91"
                   className={inputClass}
                 />
               </div>
@@ -621,7 +520,7 @@ function RegisterModal({ event, onClose }) {
                   required
                   value={teamName}
                   onChange={(e) => setTeamName(e.target.value)}
-                  placeholder="e.g. Code Crusaders"
+                  placeholder="Team Name"
                   className={inputClass}
                 />
               </div>
@@ -694,7 +593,7 @@ function RegisterModal({ event, onClose }) {
                       required
                       value={member.yearDept}
                       onChange={(e) => updateMember(idx, 'yearDept', e.target.value)}
-                      placeholder="Year / Dept (e.g. 3rd Year CSE)"
+                      placeholder="Year / Dept"
                       className={inputClass}
                     />
                   </div>
@@ -817,12 +716,12 @@ export default function ViewEvents() {
       )}
 
       {registerEvent && (
-        <RegisterModal 
-          event={registerEvent} 
+        <RegisterModal
+          event={registerEvent}
           onClose={(success) => {
             setRegisterEvent(null);
             if (success === true) fetchEvents();
-          }} 
+          }}
         />
       )}
     </div>
