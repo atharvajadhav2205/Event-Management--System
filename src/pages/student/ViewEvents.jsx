@@ -418,7 +418,8 @@ function DetailsModal({ event, onClose }) {
                           document.body.appendChild(a);
                           a.click();
                           a.remove();
-                          window.URL.revokeObjectURL(url);
+                          // Delay revocation to ensure the download starts before the blob URL is destroyed
+                          setTimeout(() => window.URL.revokeObjectURL(url), 1000);
                         })
                         .catch(() => {
                           // Fallback: open in new tab
