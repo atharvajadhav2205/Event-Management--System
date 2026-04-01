@@ -402,14 +402,30 @@ function DetailsModal({ event, onClose }) {
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {event.attachments.map((file, idx) => (
-                  <a
+                  <button
                     key={idx}
-                    href={file.url}
-                    download={file.name}
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    className="flex items-center gap-3 p-3 rounded-xl border border-gray-200 hover:border-primary-300 hover:bg-primary-50/50 transition-colors group"
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      // Programmatic download — works cross-origin
+                      fetch(file.url)
+                        .then(res => res.blob())
+                        .then(blob => {
+                          const url = window.URL.createObjectURL(blob);
+                          const a = document.createElement('a');
+                          a.href = url;
+                          a.download = file.name || 'download';
+                          document.body.appendChild(a);
+                          a.click();
+                          a.remove();
+                          window.URL.revokeObjectURL(url);
+                        })
+                        .catch(() => {
+                          // Fallback: open in new tab
+                          window.open(file.url, '_blank');
+                        });
+                    }}
+                    className="flex items-center gap-3 p-3 rounded-xl border border-gray-200 hover:border-primary-300 hover:bg-primary-50/50 transition-colors group text-left w-full"
                   >
                     <div className="w-10 h-10 rounded-lg bg-primary-100 flex items-center justify-center text-primary-600 shrink-0">
                       <FileText className="w-5 h-5" />
@@ -419,11 +435,11 @@ function DetailsModal({ event, onClose }) {
                         {file.name}
                       </p>
                       <p className="text-xs text-gray-500 uppercase tracking-wider">
-                        {file.type || 'Document'}
+                        {file.type || 'Document'} · Click to download
                       </p>
                     </div>
                     <Download className="w-4 h-4 text-gray-400 group-hover:text-primary-600 shrink-0" />
-                  </a>
+                  </button>
                 ))}
               </div>
             </div>

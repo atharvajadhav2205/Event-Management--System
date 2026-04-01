@@ -21,15 +21,14 @@ const createEvent = async (req, res) => {
     } = req.body;
 
     const parsedAttachments = [];
-    if (req.files && req.files.length > 0) {
-      for (let i = 0; i < req.files.length; i++) {
-        const f = req.files[i];
-        parsedAttachments.push({
-          name: f.originalname,
-          url: `${req.protocol}://${req.get('host')}/uploads/${f.filename}`,
-          type: f.originalname.split('.').pop().toUpperCase(),
-        });
-      }
+    // upload.fields() stores files as req.files.<fieldname> (arrays), not a flat array
+    const attachmentFiles = req.files && req.files.attachments ? req.files.attachments : [];
+    for (const f of attachmentFiles) {
+      parsedAttachments.push({
+        name: f.originalname,
+        url: `${req.protocol}://${req.get('host')}/uploads/${f.filename}`,
+        type: f.originalname.split('.').pop().toUpperCase(),
+      });
     }
 
     const eventData = {
@@ -52,9 +51,9 @@ const createEvent = async (req, res) => {
       organiserName: req.user.name,
     };
 
-    // If a certificate template image was uploaded via multer
-    if (req.file) {
-      eventData.certificateTemplate = req.file.path;
+    // upload.fields() stores certificate template as req.files.certificateTemplate[0]
+    if (req.files && req.files.certificateTemplate && req.files.certificateTemplate.length > 0) {
+      eventData.certificateTemplate = req.files.certificateTemplate[0].path;
     }
 
     const event = await Event.create(eventData);
