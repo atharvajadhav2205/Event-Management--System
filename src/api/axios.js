@@ -6,7 +6,7 @@ import axios from 'axios';
  * - Request interceptor that attaches the JWT token from localStorage
  */
 const API = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
 });
 
 // Attach JWT token to every outgoing request
