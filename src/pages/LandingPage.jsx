@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import API from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -81,7 +81,7 @@ export default function LandingPage() {
   useEffect(() => {
     const fetchPublicEvents = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/events/public');
+        const res = await API.get('/events/public');
         
         // Filter out past events (keep upcoming and live events)
         const today = new Date();
