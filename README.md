@@ -48,7 +48,7 @@ EventHub is a web-based platform designed to simplify the planning and managemen
 ## 👥 Contributors
 Developed as a Mini Project for the Department of Artificial Intelligence and Data Science at Datta Meghe College of Engineering, Airoli.
 
-* **[Shivam Nilesh Awate](https://github.com/your-username)**
+* **[Shivam Nilesh Awate](https://github.com/ShivamAwate0903)**
 *  **[Harsh Viju Bhendarkar](https://github.com/Bharsh25)**
 *  **[Soham Vijay Fegade](https://github.com/sohamfegade)**
 *  **[Atharva Rajendra Jadhav](https://github.com/atharvajadhav2205)**
