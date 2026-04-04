@@ -8,6 +8,10 @@
 
 EventHub is a web-based platform designed to simplify the planning and management of college events. Built to replace traditional manual processes involving spreadsheets and forms, it provides a centralized space where administrators can organize activities efficiently and students can seamlessly browse and register online. 
 
+
+## 🚀 Live Demo
+**[Click here to view the live deployment of EventHub](https://eventhubdmce.vercel.app)**
+
 ## 🌟 Key Features
 
 * **Centralized Dashboard:** A unified digital space for users to discover upcoming seminars, workshops, and cultural events, and register online.
@@ -28,6 +32,7 @@ EventHub is a web-based platform designed to simplify the planning and managemen
 
 ### Database
 <img src="https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB"/>
+
 * Stores user details, event information, registrations, and transactions.
 
 ### Tools & Third-Party Services
@@ -39,16 +44,24 @@ EventHub is a web-based platform designed to simplify the planning and managemen
 
 ## ⚙️ Workflow
 
+
 1. **Authentication:** Users and Admins create accounts and log in securely via JWT.
-2. **Event Creation:** Organizers add event details, upload images, and set dates, venues, and ticket prices.
+2. **Event Creation:** Organizers add event details, upload images, and set dates, venues, and ticket.
 3. **Approval:** Admins verify and approve the event before it becomes visible to users.
-4. **Registration:** Regular users search/filter events, fill out registration forms, and make payments (if required).
+4. **Registration:** Regular users search/filter events, fill out registration forms.
 5. **Ticketing & Entry:** A QR Code/Digital Ticket is issued upon successful registration, which is later scanned to verify entry and mark attendance.
 
+## 🧠 Challenges & Learnings
+During the development of EventHub, our team learned how to:
+* Manage complex states and role-based routing in React to separate Student and Admin views securely.
+* Generate and manipulate PDFs and images dynamically on the server using Node.js and Cloudinary.
+* Implement a secure and seamless QR-code generation and scanning flow for real-time attendance.
+* Collaborate effectively using Git and GitHub within a team environment under strict project deadlines.
+  
 ## 👥 Contributors
 Developed as a Mini Project for the Department of Artificial Intelligence and Data Science at Datta Meghe College of Engineering, Airoli.
 
 * **[Shivam Nilesh Awate](https://github.com/ShivamAwate0903)**
-*  **[Harsh Viju Bhendarkar](https://github.com/Bharsh25)**
-*  **[Soham Vijay Fegade](https://github.com/sohamfegade)**
-*  **[Atharva Rajendra Jadhav](https://github.com/atharvajadhav2205)**
+* **[Harsh Viju Bhendarkar](https://github.com/Bharsh25)**
+* **[Soham Vijay Fegade](https://github.com/sohamfegade)**
+* **[Atharva Rajendra Jadhav](https://github.com/atharvajadhav2205)**
