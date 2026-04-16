@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, UserPlus, ChevronDown, User, Phone, KeyRound, ArrowLeft } from 'lucide-react';
+import { Mail, Lock, UserPlus, ChevronDown, User, Phone, KeyRound, ArrowLeft, Home } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
 
@@ -120,10 +120,11 @@ export default function Signup() {
       {/* Back to Home Button */}
       <Link
         to="/"
-        className="absolute top-6 left-6 z-10 flex items-center text-white/80 hover:text-white transition-colors"
+        className="absolute top-6 left-6 z-10 flex items-center gap-2 text-white/80 hover:text-white transition-colors"
+        title="Back to Home"
       >
-        <ArrowLeft className="w-5 h-5 mr-2" />
-        <span className="font-medium text-sm">Home</span>
+        <ArrowLeft className="w-5 h-5" />
+        <Home className="w-5 h-5" />
       </Link>
 
       {/* Fixed Background */}
