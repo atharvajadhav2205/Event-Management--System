@@ -16,9 +16,10 @@ EventHub is a web-based platform designed to simplify the planning and managemen
 
 * **Centralized Dashboard:** A unified digital space for users to discover upcoming seminars, workshops, and cultural events, and register online.
 * **Role-Based Access Control:** Secure authentication system using JWT to protect user and admin routes.
-* **QR-Based Smart Attendance:** Automatically generates a QR-based ticket upon registration, allowing organizers to mark attendance quickly by scanning it at the venue.
+* **Digital PDF Ticketing & QR Attendance:** Automatically generates and emails downloadable PDF tickets with embedded QR codes upon registration. Organizers can mark attendance quickly by scanning them at the venue.
 * **Automated Certificate Generation:** Allows organizers to upload certificate templates (via Cloudinary) and automatically generate them for attendees by dynamically adjusting participant names and fonts.
-* **Real-Time Announcements:** Keeps students informed about important updates, schedules, and deadlines to close the communication gap.
+* **Event Announcements & Email Blasts:** Keeps students informed with in-app notification bells and automated email broadcasts (via Nodemailer) for important updates and schedules.
+* **Comprehensive Feedback System:** A dedicated loop where students submit post-event ratings and comments, allowing organizers to analyze feedback through a specialized dashboard.
 
 ## 💻 Tech Stack
 
@@ -39,8 +40,9 @@ EventHub is a web-based platform designed to simplify the planning and managemen
 <img src="https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens" alt="JWT"/> <img src="https://img.shields.io/badge/Cloudinary-%233448C5.svg?style=for-the-badge&logo=cloudinary&logoColor=white" alt="Cloudinary"/> 
 * **Authentication:** JWT
 * **Image & Template Storage:** Cloudinary
-* **PDF & Graphics Processing:** Pdf-Kit, Sharp, SVG
+* **PDF & Graphics Processing:** pdf-lib, pdfkit, Sharp, SVG
 * **QR functionality:** QR-Scanner & QR-Code
+* **Email Delivery & Notifications:** Nodemailer
 
 ## ⚙️ Workflow
 
@@ -49,13 +51,17 @@ EventHub is a web-based platform designed to simplify the planning and managemen
 2. **Event Creation:** Organizers add event details, upload images, and set dates, venues, and ticket.
 3. **Approval:** Admins verify and approve the event before it becomes visible to users.
 4. **Registration:** Regular users search/filter events, fill out registration forms.
-5. **Ticketing & Entry:** A QR Code/Digital Ticket is issued upon successful registration, which is later scanned to verify entry and mark attendance.
+5. **Ticketing & Notifications:** A digital PDF ticket with a QR code is generated and sent via email. Users receive in-app and email announcements for updates.
+6. **Entry & Attendance:** The QR Code on the PDF ticket is scanned at the venue to verify entry and mark attendance.
+7. **Post-Event Feedback:** Attendees submit ratings and reviews, which organizers analyze on their dashboard.
 
 ## 🧠 Challenges & Learnings
 During the development of EventHub, our team learned how to:
 * Manage complex states and role-based routing in React to separate Student and Admin views securely.
 * Generate and manipulate PDFs and images dynamically on the server using Node.js and Cloudinary.
 * Implement a secure and seamless QR-code generation and scanning flow for real-time attendance.
+* Integrate robust third-party systems like Nodemailer for email blasts and PDF generation libraries for dynamic ticketing.
+* Build a comprehensive feedback loop and announcement system to enhance user engagement.
 * Collaborate effectively using Git and GitHub within a team environment under strict project deadlines.
   
 ## 👥 Contributors
