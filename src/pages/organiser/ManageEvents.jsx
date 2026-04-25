@@ -365,16 +365,16 @@ function ViewFeedbacksModal({ event, onClose }) {
           ) : (
             <>
               {/* Summary */}
-              <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-6 mb-6">
-                <div className="text-center">
+              <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col sm:flex-row items-center gap-4 sm:gap-6 mb-6">
+                <div className="text-center shrink-0">
                   <span className="block text-4xl font-black text-gray-800">{averageRating}</span>
                   <div className="flex justify-center gap-0.5 text-amber-400 my-1">
                     {[1,2,3,4,5].map(s => <Star key={s} className={`w-4 h-4 ${s <= Math.round(averageRating) ? 'fill-current' : 'text-gray-200'}`} />)}
                   </div>
                   <span className="text-xs text-gray-500 font-medium">{feedbacks.length} Ratings</span>
                 </div>
-                <div className="flex-1 h-12 border-l border-gray-100 pl-6 flex items-center">
-                  <p className="text-sm text-gray-600 leading-relaxed italic">
+                <div className="w-full sm:w-auto flex-1 sm:h-12 border-t sm:border-t-0 sm:border-l border-gray-100 pt-4 sm:pt-0 sm:pl-6 flex items-center justify-center sm:justify-start">
+                  <p className="text-sm text-gray-600 leading-relaxed italic text-center sm:text-left">
                     "Here's what your attendees have to say about this event."
                   </p>
                 </div>
@@ -384,22 +384,22 @@ function ViewFeedbacksModal({ event, onClose }) {
               <div className="space-y-4">
                 {feedbacks.map((fb, idx) => (
                   <div key={idx} className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-                    <div className="flex justify-between items-start mb-2">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-0 mb-2">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-primary-50 text-primary-600 flex items-center justify-center font-bold text-sm">
+                        <div className="w-8 h-8 shrink-0 rounded-full bg-primary-50 text-primary-600 flex items-center justify-center font-bold text-sm">
                           {fb.userName ? fb.userName.charAt(0).toUpperCase() : 'A'}
                         </div>
                         <div>
-                          <span className="block text-sm font-bold text-gray-800">{fb.userName || 'Anonymous'}</span>
+                          <span className="block text-sm font-bold text-gray-800 break-words">{fb.userName || 'Anonymous'}</span>
                           <span className="block text-xs text-gray-400">{new Date(fb.createdAt).toLocaleDateString()}</span>
                         </div>
                       </div>
-                      <div className="flex gap-0.5 text-amber-400">
+                      <div className="flex gap-0.5 text-amber-400 ml-11 sm:ml-0">
                         {[1,2,3,4,5].map(s => <Star key={s} className={`w-3.5 h-3.5 ${s <= fb.rating ? 'fill-current' : 'text-gray-200'}`} />)}
                       </div>
                     </div>
                     {fb.comment && (
-                      <p className="text-sm text-gray-600 mt-3 leading-relaxed ml-11">
+                      <p className="text-sm text-gray-600 mt-2 sm:mt-3 leading-relaxed sm:ml-11">
                         {fb.comment}
                       </p>
                     )}

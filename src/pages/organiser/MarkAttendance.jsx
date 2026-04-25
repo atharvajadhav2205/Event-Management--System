@@ -117,7 +117,7 @@ export default function MarkAttendance() {
                     <td className="px-6 py-4 font-medium text-gray-800">{a.name}</td>
                     <td className="px-6 py-4 text-gray-500">{a.email}</td>
                     <td className="px-6 py-4">
-                      <span className={`text-xs font-semibold px-2.5 py-1 rounded-lg ${
+                      <span className={`text-xs font-semibold px-2.5 py-1 rounded-lg whitespace-nowrap ${
                         a.status === 'present' 
                           ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' 
                           : 'bg-gray-100 text-gray-500 border border-gray-200'
