@@ -457,7 +457,7 @@ export default function LandingPage() {
               <img src="/logo.png" alt="EventHub Logo" className="h-16 md:h-20 object-contain mix-blend-multiply" />
             </div>
           </div>
-          <span className="text-slate-500 text-center">© {new Date().getFullYear()} All rights reserved.</span>
+          <span className="text-slate-500 text-center">© {new Date().getFullYear()} EventHub All rights reserved.</span>
           <div className="flex flex-wrap justify-center gap-x-6 gap-y-4 font-medium text-center">
             <a href="#" className="hover:text-white transition-colors">About</a>
             <Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
