@@ -14,6 +14,7 @@ import {
   X,
   Ticket,
   ScanLine,
+  Home,
 } from 'lucide-react';
 
 const menuMap = {
@@ -95,8 +96,19 @@ export default function Sidebar({ role, open, onClose }) {
           })}
         </nav>
 
-        {/* Logout */}
-        <div className="p-3 border-t border-gray-100">
+        {/* Bottom Actions */}
+        <div className="p-3 border-t border-gray-100 space-y-1">
+          <button
+            onClick={() => {
+              navigate('/');
+              if (onClose) onClose();
+            }}
+            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-blue-600 transition-all duration-150"
+          >
+            <Home className="w-5 h-5" />
+            Back to Home
+          </button>
+
           <button
             onClick={handleLogout}
             className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 transition-all duration-150"

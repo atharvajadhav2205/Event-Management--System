@@ -17,6 +17,8 @@ import {
   ListChecks,
   Download,
   Megaphone,
+  MessageSquare,
+  Star,
 } from 'lucide-react';
 import { exportParticipants } from '../../utils/exportParticipants';
 
@@ -327,6 +329,93 @@ function AnnounceModal({ event, onClose, onAnnounced }) {
 }
 
 /* ═══════════════════════════════════════════════
+   VIEW FEEDBACKS MODAL
+   ═══════════════════════════════════════════════ */
+function ViewFeedbacksModal({ event, onClose }) {
+  const backdropRef = useRef(null);
+  const feedbacks = event.feedbacks || [];
+  
+  const averageRating = feedbacks.length > 0 
+    ? (feedbacks.reduce((acc, f) => acc + f.rating, 0) / feedbacks.length).toFixed(1)
+    : 0;
+
+  return (
+    <div ref={backdropRef} onClick={(e) => e.target === backdropRef.current && onClose()} className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeIn">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col animate-scaleIn border border-gray-100">
+        
+        {/* Header */}
+        <div className="flex justify-between items-center p-5 border-b border-gray-100">
+          <div>
+            <h3 className="text-xl font-bold text-gray-800">Event Feedbacks</h3>
+            <p className="text-sm text-gray-500 mt-0.5">{event.title}</p>
+          </div>
+          <button type="button" onClick={onClose} className="p-1.5 hover:bg-gray-100 text-gray-400 hover:text-gray-600 rounded-full transition-colors"><X className="w-5 h-5"/></button>
+        </div>
+
+        {/* Body */}
+        <div className="p-6 overflow-y-auto bg-gray-50 flex-1">
+          {feedbacks.length === 0 ? (
+            <div className="text-center py-10">
+              <div className="w-16 h-16 mx-auto mb-4 bg-white rounded-2xl flex items-center justify-center shadow-sm">
+                <MessageSquare className="w-8 h-8 text-gray-300" />
+              </div>
+              <h3 className="text-gray-500 font-medium mb-1">No feedbacks yet</h3>
+              <p className="text-gray-400 text-sm">Students haven't submitted any feedback for this event.</p>
+            </div>
+          ) : (
+            <>
+              {/* Summary */}
+              <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-6 mb-6">
+                <div className="text-center">
+                  <span className="block text-4xl font-black text-gray-800">{averageRating}</span>
+                  <div className="flex justify-center gap-0.5 text-amber-400 my-1">
+                    {[1,2,3,4,5].map(s => <Star key={s} className={`w-4 h-4 ${s <= Math.round(averageRating) ? 'fill-current' : 'text-gray-200'}`} />)}
+                  </div>
+                  <span className="text-xs text-gray-500 font-medium">{feedbacks.length} Ratings</span>
+                </div>
+                <div className="flex-1 h-12 border-l border-gray-100 pl-6 flex items-center">
+                  <p className="text-sm text-gray-600 leading-relaxed italic">
+                    "Here's what your attendees have to say about this event."
+                  </p>
+                </div>
+              </div>
+
+              {/* List */}
+              <div className="space-y-4">
+                {feedbacks.map((fb, idx) => (
+                  <div key={idx} className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-primary-50 text-primary-600 flex items-center justify-center font-bold text-sm">
+                          {fb.userName ? fb.userName.charAt(0).toUpperCase() : 'A'}
+                        </div>
+                        <div>
+                          <span className="block text-sm font-bold text-gray-800">{fb.userName || 'Anonymous'}</span>
+                          <span className="block text-xs text-gray-400">{new Date(fb.createdAt).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                      <div className="flex gap-0.5 text-amber-400">
+                        {[1,2,3,4,5].map(s => <Star key={s} className={`w-3.5 h-3.5 ${s <= fb.rating ? 'fill-current' : 'text-gray-200'}`} />)}
+                      </div>
+                    </div>
+                    {fb.comment && (
+                      <p className="text-sm text-gray-600 mt-3 leading-relaxed ml-11">
+                        {fb.comment}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════
    MAIN – MANAGE EVENTS PAGE
    ═══════════════════════════════════════════════ */
 export default function ManageEvents() {
@@ -335,6 +424,7 @@ export default function ManageEvents() {
   const [editEvent, setEditEvent] = useState(null);
   const [deleteEvent, setDeleteEvent] = useState(null);
   const [announceEvent, setAnnounceEvent] = useState(null);
+  const [viewFeedbacksEvent, setViewFeedbacksEvent] = useState(null);
   const [toast, setToast] = useState(null);
 
   const fetchEvents = async () => {
@@ -440,6 +530,12 @@ export default function ManageEvents() {
                 {/* Action buttons */}
                 <div className="grid grid-cols-2 gap-2 pt-3 border-t border-gray-50">
                   <button
+                    onClick={() => setViewFeedbacksEvent(event)}
+                    className="flex items-center justify-center gap-1.5 py-2 text-xs font-semibold rounded-xl bg-orange-50 text-orange-600 hover:bg-orange-100 transition-colors col-span-2"
+                  >
+                    <MessageSquare className="w-3.5 h-3.5" /> View Feedbacks {event.feedbacks?.length > 0 && `(${event.feedbacks.length})`}
+                  </button>
+                  <button
                     onClick={() => exportParticipants(event, 'excel')}
                     className="flex items-center justify-center gap-1.5 py-2 text-xs font-semibold rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition-colors"
                   >
@@ -474,6 +570,7 @@ export default function ManageEvents() {
       {editEvent && <EditModal event={editEvent} onClose={() => setEditEvent(null)} onSaved={handleSaved} />}
       {deleteEvent && <DeleteModal event={deleteEvent} onClose={() => setDeleteEvent(null)} onDeleted={handleDeleted} />}
       {announceEvent && <AnnounceModal event={announceEvent} onClose={() => setAnnounceEvent(null)} onAnnounced={(msg, type) => { setAnnounceEvent(null); showToast(msg, type); }} />}
+      {viewFeedbacksEvent && <ViewFeedbacksModal event={viewFeedbacksEvent} onClose={() => setViewFeedbacksEvent(null)} />}
     </div>
   );
 }

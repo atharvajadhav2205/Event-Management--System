@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { CalendarDays, MapPin, UsersRound, Clock, Tag, ExternalLink, CheckCircle } from 'lucide-react';
+import { CalendarDays, MapPin, UsersRound, Clock, Tag, ExternalLink, CheckCircle, MessageSquare, Star, X } from 'lucide-react';
 import API from '../../api/axios';
 
 function formatDate(dateStr) {
@@ -15,6 +15,30 @@ function formatDate(dateStr) {
 export default function AppliedEvents() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [feedbackEvent, setFeedbackEvent] = useState(null);
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState('');
+  const [submittingFeedback, setSubmittingFeedback] = useState(false);
+
+  const handleSubmitFeedback = async (e) => {
+    e.preventDefault();
+    if (!rating) return;
+    setSubmittingFeedback(true);
+    try {
+      await API.post(`/events/${feedbackEvent._id}/feedback`, { rating, comment });
+      setEvents(events.map(ev => 
+        ev._id === feedbackEvent._id ? { ...ev, feedbackSubmitted: true } : ev
+      ));
+      setFeedbackEvent(null);
+      setRating(0);
+      setComment('');
+    } catch (error) {
+      console.error('Failed to submit feedback:', error);
+      alert(error.response?.data?.message || 'Failed to submit feedback');
+    } finally {
+      setSubmittingFeedback(false);
+    }
+  };
 
   useEffect(() => {
     const fetchAppliedEvents = async () => {
@@ -120,9 +144,85 @@ export default function AppliedEvents() {
                     Individual Registration
                   </div>
                 )}
+
+                {/* Feedback Action */}
+                {event.isCompleted && event.attended && (
+                  <div className="mt-4 border-t border-gray-100 pt-4">
+                    {event.feedbackSubmitted ? (
+                      <div className="flex items-center justify-center gap-2 text-sm font-semibold text-emerald-600 bg-emerald-50 py-2.5 rounded-xl border border-emerald-100">
+                        <CheckCircle className="w-4 h-4" />
+                        Feedback Submitted
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          setFeedbackEvent(event);
+                          setRating(0);
+                          setComment('');
+                        }}
+                        className="w-full flex items-center justify-center gap-2 text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 py-2.5 rounded-xl transition-colors"
+                      >
+                        <MessageSquare className="w-4 h-4" />
+                        Give Feedback
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Feedback Modal */}
+      {feedbackEvent && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-scaleIn">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold text-gray-800">Share Feedback</h3>
+              <button onClick={() => setFeedbackEvent(null)} className="p-1 hover:bg-gray-100 rounded-full transition-colors text-gray-500">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <p className="text-sm text-gray-500 mb-6">
+              How was your experience at <strong className="text-gray-800">{feedbackEvent.title}</strong>?
+            </p>
+            
+            <form onSubmit={handleSubmitFeedback}>
+              <div className="mb-6 flex justify-center gap-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => setRating(star)}
+                    className={`p-1 transition-colors ${rating >= star ? 'text-amber-400' : 'text-gray-200 hover:text-amber-200'}`}
+                  >
+                    <Star className="w-10 h-10 fill-current" />
+                  </button>
+                ))}
+              </div>
+              
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Additional Comments (Optional)</label>
+                <textarea
+                  rows="4"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none text-sm resize-none"
+                  placeholder="Tell us what you loved or what could be improved..."
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                ></textarea>
+              </div>
+              
+              <button
+                type="submit"
+                disabled={rating === 0 || submittingFeedback}
+                className="w-full py-3 bg-primary-600 text-white rounded-xl font-semibold hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {submittingFeedback ? 'Submitting...' : 'Submit Feedback'}
+              </button>
+            </form>
+          </div>
         </div>
       )}
     </div>

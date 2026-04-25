@@ -16,6 +16,7 @@ const {
   getAnalytics,
   updateEvent,
   deleteEvent,
+  submitFeedback,
 } = require('../controllers/eventController');
 
 // --- Public ---
@@ -25,6 +26,7 @@ router.get('/public', getPublicEvents);
 router.get('/', protect, getApprovedEvents);
 router.post('/apply/:id', protect, authorize('student'), applyToEvent);
 router.get('/applied', protect, authorize('student'), getAppliedEvents);
+router.post('/:id/feedback', protect, authorize('student'), submitFeedback);
 
 // --- Organiser ---
 // Resolved Conflict: Combined both 'attachments' and 'certificateTemplate' uploads

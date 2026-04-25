@@ -384,6 +384,10 @@ const getAppliedEvents = async (req, res) => {
       .populate('organiserId', 'name email')
       .sort({ date: -1 });
 
+    // Fetch attendance records for this user
+    const attendances = await Attendance.find({ userId: req.user._id, status: 'present' });
+    const attendedEventIds = attendances.map(a => a.eventId.toString());
+
     // Map through events and attach user's specific registration details
     const formattedEvents = events.map(event => {
       const defaultInfo = { teamName: '', teamMembers: [], registeredAt: null };
@@ -396,9 +400,20 @@ const getAppliedEvents = async (req, res) => {
         if (found) registrationInfo = found;
       }
 
+      const eventDate = new Date(event.date);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const isCompleted = eventDate < today;
+
+      const feedbackSubmitted = event.feedbacks?.some(f => f.userId.toString() === req.user._id.toString()) || false;
+      const attended = attendedEventIds.includes(event._id.toString());
+
       return {
         ...event.toObject(),
-        userRegistrationInfo: registrationInfo
+        userRegistrationInfo: registrationInfo,
+        isCompleted,
+        attended,
+        feedbackSubmitted
       };
     });
 
@@ -552,6 +567,57 @@ const deleteEvent = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Submit feedback for an attended event
+ * @route   POST /api/events/:id/feedback
+ * @access  Student
+ */
+const submitFeedback = async (req, res) => {
+  try {
+    const { rating, comment } = req.body;
+    
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: 'Invalid Event ID format' });
+    }
+
+    const event = await Event.findById(req.params.id);
+    if (!event) return res.status(404).json({ message: 'Event not found' });
+
+    // 1. Check if the event date has passed
+    const eventDate = new Date(event.date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (eventDate >= today) {
+      return res.status(400).json({ message: 'Feedback can only be submitted after the event has completed' });
+    }
+
+    // 2. Check if the user actually attended (marked present)
+    const attendance = await Attendance.findOne({ eventId: event._id, userId: req.user._id, status: 'present' });
+    if (!attendance) {
+      return res.status(403).json({ message: 'You must have attended the event to submit feedback' });
+    }
+
+    // 3. Check if feedback already submitted
+    const alreadySubmitted = event.feedbacks.some(f => f.userId.toString() === req.user._id.toString());
+    if (alreadySubmitted) {
+      return res.status(400).json({ message: 'You have already submitted feedback for this event' });
+    }
+
+    event.feedbacks.push({
+      userId: req.user._id,
+      userName: req.user.name,
+      rating: Number(rating),
+      comment
+    });
+
+    await event.save();
+    res.status(201).json({ message: 'Feedback submitted successfully', event });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   createEvent,
   getApprovedEvents,
@@ -566,4 +632,5 @@ module.exports = {
   getAnalytics,
   updateEvent,
   deleteEvent,
+  submitFeedback,
 };

@@ -120,6 +120,26 @@ const eventSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  // --- Feedbacks ---
+  feedbacks: [
+    {
+      userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+      userName: String,
+      rating: {
+        type: Number,
+        min: 1,
+        max: 5,
+      },
+      comment: String,
+      createdAt: {
+        type: Date,
+        default: Date.now,
+      },
+    }
+  ],
   createdAt: {
     type: Date,
     default: Date.now,

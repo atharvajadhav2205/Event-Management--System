@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import API from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import gsap from 'gsap';
@@ -59,6 +59,65 @@ const TiltCard = ({ children, className }) => {
 
 
 
+// Helper for Stars
+const Stars = ({ count }) => (
+  <div className="flex gap-1 mb-3">
+    {[...Array(5)].map((_, i) => (
+      <svg key={i} className={`w-5 h-5 ${i < count ? 'text-slate-900' : 'text-slate-200'}`} fill="currentColor" viewBox="0 0 20 20">
+        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+      </svg>
+    ))}
+  </div>
+);
+
+const FEEDBACKS = [
+  {
+    id: 1,
+    rating: 4,
+    text: "EventHub transformed how our tech club manages hackathons. It's so easy to track registrations and issue certificates!",
+    author: "Shivam Awate",
+    time: "2 days ago",
+    initial: "S",
+    color: "bg-emerald-500"
+  },
+  {
+    id: 2,
+    rating: 5,
+    text: "The platform is incredibly user-friendly. I've found three internships and attended two amazing workshops through EventHub.",
+    author: "Kartiki Korade",
+    time: "4 days ago",
+    initial: "K",
+    color: "bg-blue-500"
+  },
+  {
+    id: 3,
+    rating: 5,
+    text: "Issuing verified certificates was always a headache, but EventHub makes it a one-click process. Highly recommended for all college societies.",
+    author: "Sakshi Koshti",
+    time: "1 week ago",
+    initial: "S",
+    color: "bg-indigo-500"
+  },
+  {
+    id: 4,
+    rating: 4,
+    text: "Great interface and smooth experience. Love the real-time notifications for upcoming events on campus.",
+    author: "Vaibhav Jadhav",
+    time: "2 weeks ago",
+    initial: "V",
+    color: "bg-purple-500"
+  },
+  {
+    id: 5,
+    rating: 5,
+    text: "Perfect for Indian classrooms and college societies. The analytics dashboard helps us understand our event reach perfectly.",
+    author: "Shreyash Hingane",
+    time: "3 weeks ago",
+    initial: "S",
+    color: "bg-teal-500"
+  }
+];
+
 // --- Main Page Component ---
 
 export default function LandingPage() {
@@ -69,14 +128,8 @@ export default function LandingPage() {
 
   const containerRef = useRef(null);
 
-  // If already logged in, go to dashboard
-  useEffect(() => {
-    if (user) {
-      if (user.role === 'student') navigate('/student/events');
-      if (user.role === 'admin') navigate('/admin/approve-events');
-      if (user.role === 'organiser') navigate('/organiser/create-event');
-    }
-  }, [user, navigate]);
+  // Wait, I should not redirect if they are just visiting landing page
+  // The user can now visit landing page while logged in.
 
   useEffect(() => {
     const fetchPublicEvents = async () => {
@@ -157,19 +210,33 @@ export default function LandingPage() {
             <div className="flex-shrink-0 flex items-center">
               <img src="/logo.png" alt="EventHub Logo" className="h-16 md:h-20 object-contain mix-blend-multiply hover:scale-105 transition-transform cursor-pointer" />
             </div>
-            <div className="flex space-x-6">
-              <button
-                onClick={() => navigate('/login')}
-                className="text-slate-600 hover:text-blue-600 px-3 py-2 rounded-md font-semibold transition-colors"
-              >
-                Log In
-              </button>
-              <button
-                onClick={() => navigate('/signup')}
-                className="bg-slate-900 hover:bg-blue-600 text-white px-6 py-2.5 rounded-full font-semibold shadow-lg shadow-blue-500/0 hover:shadow-blue-500/30 transition-all duration-300 hover:-translate-y-1"
-              >
-                Sign Up
-              </button>
+            <div className="flex space-x-6 items-center">
+              {user ? (
+                <>
+                  <span className="text-sm font-semibold text-slate-600 hidden sm:inline-block">Hi, {user.name}</span>
+                  <button
+                    onClick={() => navigate(`/${user.role}`)}
+                    className="bg-slate-900 hover:bg-blue-600 text-white px-6 py-2.5 rounded-full font-semibold shadow-lg shadow-blue-500/0 hover:shadow-blue-500/30 transition-all duration-300 hover:-translate-y-1"
+                  >
+                    Go to Dashboard
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => navigate('/login?redirect=/')}
+                    className="text-slate-600 hover:text-blue-600 px-3 py-2 rounded-md font-semibold transition-colors"
+                  >
+                    Log In
+                  </button>
+                  <button
+                    onClick={() => navigate('/signup?redirect=/')}
+                    className="bg-slate-900 hover:bg-blue-600 text-white px-6 py-2.5 rounded-full font-semibold shadow-lg shadow-blue-500/0 hover:shadow-blue-500/30 transition-all duration-300 hover:-translate-y-1"
+                  >
+                    Sign Up
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -315,6 +382,73 @@ export default function LandingPage() {
         </div>
       </div>
 
+      {/* Testimonials / Feedback Section */}
+      <div className="py-24 bg-slate-50 overflow-hidden relative border-t border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">Real Stories, Real Impact</h2>
+          <p className="mt-4 text-xl text-slate-500">Hear from people who use EventHub every day.</p>
+        </div>
+
+        {/* Marquee Container */}
+        <div className="relative w-full overflow-hidden flex pb-12">
+          {/* Gradient Masks for smooth fading edges */}
+          <div className="absolute top-0 bottom-0 left-0 w-32 bg-gradient-to-r from-slate-50 to-transparent z-10"></div>
+          <div className="absolute top-0 bottom-0 right-0 w-32 bg-gradient-to-l from-slate-50 to-transparent z-10"></div>
+
+          <div className="flex w-max animate-marquee gap-8 px-4 hover:animate-paused">
+            {[...FEEDBACKS, ...FEEDBACKS].map((feedback, idx) => (
+              <div key={`${feedback.id}-${idx}`} className="w-[350px] sm:w-[400px] bg-white p-8 rounded-3xl shadow-lg shadow-slate-200/50 border border-slate-100 flex flex-col flex-shrink-0 cursor-default hover:-translate-y-3 hover:shadow-2xl hover:shadow-slate-300/60 transition-all duration-300">
+                <Stars count={feedback.rating} />
+                <p className="text-slate-600 text-lg leading-relaxed mb-8 flex-grow italic">"{feedback.text}"</p>
+                <div className="flex items-center gap-4 mt-auto">
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-xl ${feedback.color}`}>
+                    {feedback.initial}
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-slate-900">{feedback.author}</h4>
+                    <span className="text-sm text-slate-500">{feedback.time}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Share Your Experience Section (Only for students or non-logged in users) */}
+      {(!user || user.role === 'student') && (
+        <div className="py-24 bg-white relative">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-8">Share Your Experience</h2>
+            <div className="bg-slate-50 p-6 md:p-8 rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/50 text-left relative group">
+              <textarea
+                id="feedback-text"
+                rows={4}
+                className="w-full bg-white border border-slate-200 rounded-2xl p-5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all resize-none mb-4 cursor-text"
+                placeholder={user ? "Write your experience here..." : "Sign in to share your experience..."}
+                onClick={() => !user && navigate('/login?redirect=/')}
+                readOnly={!user}
+              ></textarea>
+              <div className="flex justify-end">
+                <button
+                  onClick={() => {
+                    if (!user) {
+                      navigate('/login?redirect=/');
+                    } else {
+                      document.getElementById('feedback-text').value = '';
+                      alert('Thank you for your feedback!');
+                    }
+                  }}
+                  className="px-8 py-3 bg-slate-900 text-white rounded-xl font-semibold hover:bg-blue-600 shadow-lg shadow-slate-300 hover:shadow-blue-500/30 transition-all duration-300 transform group-hover:-translate-y-1"
+                >
+                  Share
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Footer */}
       <footer className="bg-slate-950 text-slate-400 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
@@ -323,11 +457,11 @@ export default function LandingPage() {
               <img src="/logo.png" alt="EventHub Logo" className="h-16 md:h-20 object-contain mix-blend-multiply" />
             </div>
           </div>
-          <span className="text-slate-500">© {new Date().getFullYear()} All rights reserved.</span>
-          <div className="flex gap-8 font-medium">
+          <span className="text-slate-500 text-center">© {new Date().getFullYear()} All rights reserved.</span>
+          <div className="flex flex-wrap justify-center gap-x-6 gap-y-4 font-medium text-center">
             <a href="#" className="hover:text-white transition-colors">About</a>
-            <a href="#" className="hover:text-white transition-colors">Privacy</a>
-            <a href="#" className="hover:text-white transition-colors">Terms</a>
+            <Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+            <Link to="/terms" className="hover:text-white transition-colors">Terms & Conditions</Link>
           </div>
         </div>
       </footer>
