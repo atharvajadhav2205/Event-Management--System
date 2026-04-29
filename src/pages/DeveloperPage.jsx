@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Github, Linkedin, Code2 } from 'lucide-react';
 
@@ -7,6 +7,11 @@ export default function DeveloperPage() {
 
     // Explicitly tracks which card the mouse is currently pointing at
     const [hoveredCardId, setHoveredCardId] = useState(null);
+
+    // THIS FIXES THE SCROLL ISSUE: Forces the page to start at the top when opened
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
     // Team data array
     const teamMembers = [
