@@ -472,7 +472,7 @@ export default function LandingPage() {
 
             {/* Copyright */}
             <span className="text-slate-500 text-sm">
-              © {new Date().getFullYear()} All rights reserved.
+              © {new Date().getFullYear()} EventHub. All rights reserved.
             </span>
           </div>
 
