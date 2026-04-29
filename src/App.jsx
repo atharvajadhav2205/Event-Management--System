@@ -4,6 +4,7 @@ import AuthPage from './pages/AuthPage';
 import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import LandingPage from './pages/LandingPage';
+import DeveloperPage from './pages/DeveloperPage';
 import DashboardLayout from './components/DashboardLayout';
 
 // Student
@@ -56,6 +57,7 @@ export default function App() {
       <Route path="/signup" element={<AuthPage />} />
       <Route path="/terms" element={<TermsOfService />} />
       <Route path="/privacy" element={<PrivacyPolicy />} />
+      <Route path="/developer" element={<DeveloperPage />} />
 
       {/* Dashboard shell — :role = student | organiser | admin */}
       <Route

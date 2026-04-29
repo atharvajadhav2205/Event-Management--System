@@ -128,9 +128,6 @@ export default function LandingPage() {
 
   const containerRef = useRef(null);
 
-  // Wait, I should not redirect if they are just visiting landing page
-  // The user can now visit landing page while logged in.
-
   useEffect(() => {
     const fetchPublicEvents = async () => {
       try {
@@ -148,7 +145,6 @@ export default function LandingPage() {
         // Sort events so the nearest upcoming events show first
         upcomingAndLiveEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-        // You could slice here if you want a max number limit: upcomingAndLiveEvents.slice(0, 10)
         setEvents(upcomingAndLiveEvents);
       } catch (error) {
         console.error("Failed to load public events", error);
@@ -450,19 +446,39 @@ export default function LandingPage() {
       )}
 
       {/* Footer */}
-      <footer className="bg-slate-950 text-slate-400 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex items-center gap-3 hover:scale-105 transition-transform cursor-pointer">
+      <footer className="bg-slate-950 text-slate-400 py-12 md:py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-8">
+
+          {/* Logo Section */}
+          <div className="flex items-center gap-3 hover:scale-105 transition-transform cursor-pointer md:w-1/3 justify-center md:justify-start">
             <div className="bg-white/95 px-4 py-3 rounded-2xl shadow-xl">
-              <img src="/logo.png" alt="EventHub Logo" className="h-16 md:h-20 object-contain mix-blend-multiply" />
+              <img src="/logo.png" alt="EventHub Logo" className="h-12 md:h-16 object-contain mix-blend-multiply" />
             </div>
           </div>
-          <span className="text-slate-500 text-center">© {new Date().getFullYear()} All rights reserved.</span>
-          <div className="flex flex-wrap justify-center gap-x-6 gap-y-4 font-medium text-center">
-            <a href="#" className="hover:text-white transition-colors">About</a>
-            <Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <Link to="/terms" className="hover:text-white transition-colors">Terms & Conditions</Link>
+
+          {/* Links & Copyright Section (Centered) */}
+          <div className="flex flex-col items-center justify-center gap-4 text-sm md:text-base font-medium text-center md:w-1/3">
+            {/* Top row of links */}
+            <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
+              <a href="#" className="hover:text-white transition-colors">About</a>
+              <Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+              <Link to="/terms" className="hover:text-white transition-colors">Terms & Conditions</Link>
+            </div>
+
+            {/* Meet our developers link */}
+            <Link to="/developer" className="text-blue-400 hover:text-blue-300 transition-colors">
+              Meet Our Developers!
+            </Link>
+
+            {/* Copyright */}
+            <span className="text-slate-500 text-sm">
+              © {new Date().getFullYear()} All rights reserved.
+            </span>
           </div>
+
+          {/* Empty spacer to balance the flex container so the middle section stays perfectly centered on desktop */}
+          <div className="hidden md:block md:w-1/3"></div>
+
         </div>
       </footer>
     </div>
